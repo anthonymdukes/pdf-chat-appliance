@@ -1,0 +1,6 @@
+llama-index[all]
+chromadb
+PyMuPDF
+flask
+sentence-transformers
+requests

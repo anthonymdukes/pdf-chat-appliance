@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    volumes:
+      - openwebui-data:/app/backend/data
+    environment:
+      - OLLAMA_HOST=http://host.docker.internal:11434
+
+  backend:
+    build: .
+    container_name: pdf-chat-backend
+    restart: unless-stopped
+    volumes:
+      - ./documents:/app/documents
+      - ./chroma_store:/app/chroma_store
+    ports:
+      - "5000:5000"
+
+volumes:
+  openwebui-data:
