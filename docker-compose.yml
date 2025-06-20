@@ -11,5 +11,15 @@ services:
     environment:
       - OLLAMA_HOST=http://host.docker.internal:11434
 
+  backend:
+    build: .
+    container_name: pdf-chat-backend
+    restart: unless-stopped
+    volumes:
+      - ./documents:/app/documents
+      - ./chroma_store:/app/chroma_store
+    ports:
+      - "5000:5000"
+
 volumes:
   openwebui-data:

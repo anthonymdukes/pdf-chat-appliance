@@ -3,3 +3,4 @@ chromadb
 PyMuPDF
 flask
 sentence-transformers
+requests

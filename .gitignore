@@ -3,4 +3,6 @@ __pycache__/
 .env
 chroma_store/
 *.log
-documents/
+documents/*
+!documents/.gitkeep
+!documents/sample.pdf
