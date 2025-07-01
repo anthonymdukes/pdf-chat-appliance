@@ -1,0 +1,21 @@
+# PDF Chat Appliance Configuration
+# Default configuration file for OVA deployment
+
+# Paths (OVA-specific)
+docs_dir: "/var/lib/pdfchat/documents"
+persist_dir: "/var/lib/pdfchat/chroma_store"
+
+# Embedding model
+embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+
+# Server settings
+host: "0.0.0.0"
+port: 5000
+
+# LLM settings (for future Ollama integration)
+llm_model: null
+llm_base_url: null
+
+# OVA-specific settings
+log_dir: "/var/log/pdfchat"
+config_dir: "/etc/pdfchat" 
