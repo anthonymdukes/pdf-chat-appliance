@@ -1,21 +1,73 @@
 # PDF Chat Appliance Configuration
-# Default configuration file for OVA deployment
+# Enterprise-scale configuration for multi-vendor documentation system
 
-# Paths (OVA-specific)
+# Paths (Enterprise deployment)
 docs_dir: "/var/lib/pdfchat/documents"
 persist_dir: "/var/lib/pdfchat/chroma_store"
 
 # Embedding model
 embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
 
+# Enterprise Multi-Vendor Document Processing
+enterprise:
+  max_vendors: 10                        # Maximum number of vendor document sets
+  max_document_size_mb: 500              # Support up to 500MB documents
+  max_total_corpus_gb: 50                # Total corpus size limit
+  enable_cross_vendor_search: true       # Enable cross-vendor queries
+  vendor_namespacing: true               # Separate vendor contexts
+
+# Large File Processing Optimization (Enhanced for 10K+ pages)
+chunking:
+  chunk_size: 384                        # Smaller chunks for better granularity
+  chunk_overlap: 64                      # Higher overlap for context preservation
+  max_concurrent_chunks: 8               # Increased parallel processing
+  batch_size: 20                         # Larger batches for efficiency
+  enable_streaming: true                 # Stream processing for memory efficiency
+  semantic_chunking: true                # Use semantic boundaries for chunks
+
+# File Processing (Enterprise Scale)
+file_processing:
+  max_file_size_mb: 500                  # Support 500MB+ vendor docs
+  staging_dir: "/app/shared_uploads"     # Shared staging directory
+  enable_async: true                     # Enable asynchronous processing
+  progress_tracking: true                # Enable progress feedback
+  parallel_workers: 4                   # Parallel document processors
+  queue_size: 100                       # Processing queue capacity
+
+# Vector Database Optimization (Qdrant Enterprise)
+vector_db:
+  collection_strategy: "multi_collection" # Separate collections per vendor
+  enable_sharding: true                  # Enable horizontal scaling
+  replication_factor: 1                  # Data replication
+  indexing_threshold: 10000              # Auto-index at 10K vectors
+  search_timeout: 30                     # Extended search timeout
+  batch_upsert_size: 100                 # Batch vector insertions
+
+# Memory Management (Enterprise Scale)
+memory:
+  max_memory_per_worker: "4GB"          # Memory limit per worker
+  enable_memory_monitoring: true         # Monitor memory usage
+  garbage_collection_interval: 300      # GC every 5 minutes
+  cache_size_mb: 1024                   # 1GB vector cache
+
+# Cross-Vendor Intelligence
+cross_vendor:
+  enable_relationship_mapping: true      # Map relationships between vendors
+  confidence_threshold: 0.7             # Minimum confidence for cross-references
+  max_cross_references: 10              # Maximum cross-vendor results
+  vendor_priority_weights:              # Priority for different vendors
+    vmware: 1.0
+    cisco: 1.0
+    dell: 0.9
+    hpe: 0.9
+    default: 0.8
+
 # Server settings
 host: "0.0.0.0"
 port: 5000
 
-# LLM settings (for future Ollama integration)
-llm_model: null
-llm_base_url: null
-
-# OVA-specific settings
-log_dir: "/var/log/pdfchat"
-config_dir: "/etc/pdfchat" 
+# LLM settings (Enhanced for enterprise queries)
+llm_model: "mistral"
+llm_base_url: "http://ollama:11434"
+llm_timeout: 60                         # Extended timeout for complex queries
+context_window: 8192                    # Larger context for multi-vendor queries 

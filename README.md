@@ -1,26 +1,27 @@
 # PDF Chat Appliance
 
 ## 🦾 Mission
-A production-ready, self-hosted AI appliance for querying your own PDFs using state-of-the-art LLMs, embeddings, and a modern WebUI. Built for privacy, speed, and extensibility.
+A production-ready, self-hosted document chat appliance using Open WebUI as the frontend interface. Features multi-document support, local LLM processing, and vector search capabilities. Built for privacy, speed, and extensibility.
 
 ---
 
 ## ✨ Features
-- Drop-in PDF ingestion and semantic search
-- Fast, local LLM-powered Q&A (Ollama, llama-index, ChromaDB)
-- WebUI and CLI modes
-- Modular, extensible Python codebase
-- Dockerized for easy deployment
-- Configurable, with optional OVA/Proxmox support
+- **Open WebUI Frontend**: Modern chat interface at `http://localhost:8080`
+- **Multi-Document Support**: PDF, TXT, MD, DOCX, CSV, RTF file processing
+- **Local LLM Processing**: Ollama with Mistral model for embeddings and chat
+- **Vector Database**: Qdrant for high-performance semantic search
+- **Backend API**: RESTful document processing service
+- **Docker Orchestration**: Complete containerized stack
+- **Self-Contained**: Runs entirely on local infrastructure
 
 ---
 
-## 🚀 Installation
+## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.9+
-- Docker (for containerized deployment)
-- (Optional) Ollama, llama-index, ChromaDB dependencies
+- Docker and Docker Compose
+- 8GB+ RAM recommended
+- 15GB+ disk space for models and documents
 
 ### Steps
 1. Clone the repo:
@@ -28,42 +29,71 @@ A production-ready, self-hosted AI appliance for querying your own PDFs using st
    git clone https://github.com/your-org/pdf-chat-appliance.git
    cd pdf-chat-appliance
    ```
-2. Install dependencies:
+2. Start the complete stack:
    ```sh
-   pip install -r requirements.txt
+   docker-compose up -d
    ```
-3. (Optional) Start with Docker:
-   ```sh
-   docker-compose up --build
-   ```
+3. Access Open WebUI:
+   - Open `http://localhost:8080` in your browser
+   - Upload documents and start chatting!
 
 ---
 
 ## 🛠️ Usage
 
-### CLI (Typer-based)
-```sh
-python pdfchat.py ingest <pdf-folder> [--config config/default.yaml]
-python pdfchat.py serve [--host 0.0.0.0 --port 5000]
-python pdfchat.py config show
-```
+### Open WebUI (Primary Interface)
+- **Access**: `http://localhost:8080`
+- **Features**: Upload documents, chat with content, manage conversations
+- **Supported Formats**: PDF, TXT, MD, DOCX, CSV, RTF
 
-### WebUI
-- Start the server: `python pdfchat.py serve`
-- Open your browser to `http://localhost:5000`
-- Upload PDFs and start chatting!
+### Backend API (For Integration)
+- **Health Check**: `GET http://localhost:5000/health`
+- **Document Upload**: `POST http://localhost:5000/upload`
+- **Document Query**: `POST http://localhost:5000/query`
+- **Get Context**: `POST http://localhost:5000/context`
+
+### CLI Management
+```sh
+# Ingest documents (inside container)
+docker exec pdf-chat-appliance python pdfchat.py ingest documents
+
+# Check container logs
+docker logs pdf-chat-appliance
+```
 
 ---
 
-## ⚙️ Configuration
-- All config options are in `config/default.yaml` (or override via CLI flags)
-- See `docs/usage.md`, `docs/configuration.md`, and `docs/deployment.md` for advanced options
+## ⚙️ Architecture
+
+### Services
+- **Open WebUI** (`localhost:8080`): Primary frontend interface
+- **Ollama** (`localhost:11434`): Local LLM and embeddings
+- **Qdrant** (`localhost:6333`): Vector database for semantic search
+- **Backend API** (`localhost:5000`): Document processing service
+- **Nginx** (`localhost:80/443`): Reverse proxy (optional)
+
+### Data Flow
+1. Upload documents via Open WebUI
+2. Backend processes and creates embeddings
+3. Documents stored in Qdrant vector database
+4. Chat queries retrieve relevant context
+5. Ollama generates responses based on document content
 
 ---
 
 ## 📦 Deployment
-- Docker: `docker-compose up --build`
-- OVA/Proxmox: See `docs/deployment.md` (optional)
+
+### Docker (Recommended)
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
 
 ---
 

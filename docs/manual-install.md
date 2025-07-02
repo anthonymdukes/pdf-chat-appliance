@@ -13,9 +13,9 @@ This guide provides step-by-step instructions for manually installing PDF Chat A
 - **OS**: Ubuntu 22.04 LTS or 24.04 LTS
 
 ### Software Requirements
-- Python 3.9+ (included with Ubuntu 22.04+)
-- Git (for cloning repository)
-- curl (for Ollama installation)
+- **Python**: 3.12.3+ (recommended) or 3.9+
+- **Git**: For cloning repository
+- **curl**: For Ollama installation
 
 ## Step 1: VM Creation
 
@@ -326,6 +326,23 @@ curl -X POST http://localhost:5000/query \
   -d '{"question": "What is this document about?"}'
 ```
 
+### Run Tests
+```bash
+# Navigate to project directory
+cd /opt/pdf-chat-appliance
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Run all tests
+pytest -v
+
+# Run specific test categories
+pytest tests/memory/ -v
+pytest tests/test_ingestion.py -v
+pytest tests/test_server.py -v
+```
+
 ## Step 8: Security & Firewall
 
 ### Configure Firewall
@@ -357,6 +374,69 @@ sudo nano /etc/ssh/sshd_config
 # Restart SSH
 sudo systemctl restart ssh
 ```
+
+## Usage Guide
+
+### CLI Commands
+
+#### Ingest PDFs
+```bash
+# Ingest PDFs from a directory
+pdfchat ingest /path/to/pdfs
+
+# Use custom config file
+pdfchat ingest /path/to/pdfs --config /etc/pdfchat/config.yaml
+```
+
+#### Start Server
+```bash
+# Start server with default settings
+pdfchat serve
+
+# Start with custom host and port
+pdfchat serve --host 127.0.0.1 --port 8080
+
+# Start in debug mode
+pdfchat serve --debug
+```
+
+#### Manage Configuration
+```bash
+# Show current configuration
+pdfchat config show
+
+# Edit configuration
+pdfchat config edit
+
+# Reset to defaults
+pdfchat config reset
+```
+
+#### Check Version
+```bash
+pdfchat version
+```
+
+### API Usage
+
+#### Health Check
+```bash
+curl http://localhost:5000/health
+```
+
+#### Query PDFs
+```bash
+curl -X POST http://localhost:5000/query \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "What is the main topic of this document?",
+    "top_k": 3
+  }'
+```
+
+#### Web Interface
+- Open browser to `http://<server-ip>:5000`
+- Simple HTML interface for testing
 
 ## Troubleshooting
 
@@ -404,11 +484,34 @@ df -h
 htop
 ```
 
+#### Test Failures
+```bash
+# Check Python environment
+python --version
+pip list | grep llama
+
+# Reinstall dependencies
+pip install -r requirements.txt --force-reinstall
+
+# Run tests with verbose output
+pytest -v -s
+```
+
 ### Log Locations
 - Application logs: `/var/log/pdfchat/`
 - System logs: `sudo journalctl -u pdfchat`
 - Nginx logs: `/var/log/nginx/`
 - Ollama logs: `sudo journalctl -u ollama`
+
+## Environment Variables
+
+### Optional Environment Variables
+```bash
+# Set in /etc/pdfchat/config.yaml or environment
+export PDFCHAT_CONFIG_FILE=/etc/pdfchat/config.yaml
+export PDFCHAT_LOG_LEVEL=INFO
+export PDFCHAT_DEBUG=false
+```
 
 ## Next Steps
 

@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  pdfchat:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./documents:/app/documents
+      - ./config:/app/config
+    environment:
+      - PDFCHAT_LOG_LEVEL=DEBUG
+      - PYTHONPATH=/app
+    command: ["python", "pdfchat.py", "serve", "--host", "0.0.0.0", "--port", "5000", "--debug"]
+    ports:
+      - "5000:5000"
+      - "5678:5678"  # For debugging
+
+  # Development tools
+  dev-tools:
+    image: python:3.12-slim
+    container_name: pdfchat-dev-tools
+    volumes:
+      - .:/app
+      - ./data:/app/data
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+    command: ["tail", "-f", "/dev/null"]  # Keep container running
+    depends_on:
+      - pdfchat
+    networks:
+      - pdfchat-network 

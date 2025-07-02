@@ -19,7 +19,7 @@ class Session(Base):
     user_id = Column(String, nullable=True)
     start_time = Column(DateTime, default=datetime.datetime.utcnow)
     end_time = Column(DateTime, nullable=True)
-    metadata = Column(Text, nullable=True)
+    session_metadata = Column(Text, nullable=True)
     messages = relationship("Message", back_populates="session")
 
 class Message(Base):

@@ -1,15 +1,121 @@
-version: "3.9"
 services:
+  # PDF Chat Appliance Service
+  pdfchat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pdf-chat-appliance
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+      - ./documents:/app/documents
+      - ./config:/app/config
+      - pdfchat_logs:/app/logs
+      - shared_uploads:/app/shared_uploads
+    environment:
+      - PYTHONPATH=/app
+      - PDFCHAT_CONFIG_FILE=/app/config/default.yaml
+      - PDFCHAT_LOG_LEVEL=INFO
+    depends_on:
+      - ollama
+      - qdrant
+    networks:
+      - pdfchat-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Ollama Service for LLM
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - pdfchat-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: pdfchat-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - pdfchat
+    networks:
+      - pdfchat-network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - pdfchat-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
   webui:
     image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
-    restart: unless-stopped
-    ports:
-      - "3000:8080"
     volumes:
-      - openwebui-data:/app/backend/data
+      - ./custom_docs:/app/backend/data/docs
+      - shared_uploads:/app/backend/uploads
+    ports:
+      - "8080:8080"
     environment:
-      - OLLAMA_HOST=http://host.docker.internal:11434
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=your-secret-key-here
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
-  openwebui-data:
+  pdfchat_logs:
+    driver: local
+  ollama_data:
+    driver: local
+  qdrant_data:
+    driver: local
+  shared_uploads:
+    driver: local
+
+networks:
+  pdfchat-network:
+    driver: bridge

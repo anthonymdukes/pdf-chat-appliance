@@ -12,6 +12,9 @@ from typing import Optional
 from pdfchat import __version__, Config, PDFIngestion, QueryServer
 from pdfchat.utils import validate_pdf_directory, get_pdf_count
 
+with open("/app/logs/embedding_debug.txt", "w") as dbg:
+    dbg.write("[DEBUG] Entered pdfchat.py top-level\n")
+
 app = typer.Typer(
     name="pdfchat",
     help="PDF Chat Appliance - Query your PDFs with AI",
@@ -52,7 +55,9 @@ def ingest(
         typer.echo("✅ PDF ingestion completed successfully!")
         
     except Exception as e:
+        import traceback
         typer.echo(f"❌ Error during ingestion: {e}")
+        traceback.print_exc()
         raise typer.Exit(1)
 
 

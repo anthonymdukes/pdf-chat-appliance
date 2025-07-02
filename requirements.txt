@@ -1,9 +1,48 @@
-llama-index[all]==0.10.0
-chromadb==0.4.24
-PyMuPDF==1.23.26
-flask==3.0.2
-sentence-transformers==2.5.1
+# Core dependencies
+flask==3.0.0
+flask-cors==4.0.0
 typer==0.9.0
+rich==13.7.0
 pyyaml==6.0.1
-pytest==8.0.2
-sqlalchemy==2.0.27
+python-dotenv==1.0.0
+
+# LlamaIndex and related - constrained to 0.10.x for compatibility
+llama-index-core>=0.10.0,<0.11.0
+llama-index>=0.10.0,<0.11.0
+llama-index-llms-ollama>=0.1.0,<0.2.0
+llama-index-embeddings-ollama>=0.1.0,<0.2.0
+llama-index-embeddings-huggingface>=0.1.0,<0.2.0
+llama-index-readers-file>=0.1.0,<0.2.0
+
+# Vector store
+qdrant-client>=1.7.0,<2.0.0
+llama-index-vector-stores-qdrant>=0.1.0,<0.2.0
+
+# Document processing
+pypdf>=4.0.1,<5.0.0
+langchain==0.1.0
+langchain-community==0.0.10
+
+# Memory layer
+sqlalchemy==2.0.23
+alembic==1.13.1
+
+# Utilities
+requests==2.31.0
+urllib3==2.1.0
+tqdm==4.66.1
+transformers==4.37.0
+sentence-transformers==2.2.2
+
+# Development and testing
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-asyncio==0.21.1
+black==23.12.1
+flake8==7.0.0
+mypy==1.8.0
+pre-commit==3.6.0
+
+# Type stubs
+types-requests==2.31.0.10
+types-PyYAML==6.0.12.12

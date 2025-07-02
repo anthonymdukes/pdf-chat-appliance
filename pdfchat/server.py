@@ -1,27 +1,160 @@
 """
 Query server for PDF Chat Appliance.
+Enterprise-scale multi-vendor documentation system.
 
 This module provides the Flask-based API server for handling PDF queries
 and serving the WebUI interface.
 """
 
+import os
+from llama_index.core import Settings
+
+# Try to import optional dependencies, provide stubs if not available
+try:
+    from llama_index.embeddings.ollama import OllamaEmbedding
+    from llama_index.llms.ollama import Ollama
+    # Use Ollama for both embeddings and LLM since we're running Ollama locally
+    Settings.embed_model = OllamaEmbedding(model_name="mistral", base_url="http://ollama:11434")
+    Settings.llm = Ollama(model="mistral", base_url="http://ollama:11434")
+    print(f"[DEBUG] Using Ollama embeddings and LLM with mistral model", flush=True)
+except ImportError:
+    print("[DEBUG] OllamaEmbedding/Ollama not available, using default")
+
 from flask import Flask, request, jsonify
-from typing import Optional, Dict, Any
-from llama_index.core import StorageContext, load_index_from_storage
-from llama_index.vector_stores.chroma import ChromaVectorStore
+from typing import Optional, Dict, Any, List
+from llama_index.core.storage import StorageContext
+from werkzeug.exceptions import BadRequest
+
+try:
+    from qdrant_client import QdrantClient
+    from llama_index.vector_stores.qdrant import QdrantVectorStore
+except ImportError:
+    # For testing purposes, these imports are handled in ingestion.py
+    pass
 
 from .config import Config
 from .ingestion import PDFIngestion
 
+# Import chat history if available
+try:
+    from memory.chat_history import ChatHistoryDB
+except ImportError:
+    # Create a stub for testing
+    class ChatHistoryDB:
+        def __init__(self):
+            pass
+        def get_history(self, user_id, document_id, limit=10):
+            return []
+        def add_message(self, user_id, document_id, message, response):
+            pass
+
+class EnterpriseCrossVendorQuery:
+    """Handles cross-vendor intelligence queries for enterprise infrastructure design."""
+    
+    def __init__(self, config):
+        self.config = config
+        self.cross_vendor_config = getattr(config, 'cross_vendor', {})
+        
+    def parse_cross_vendor_query(self, question: str) -> Dict:
+        """Parse query to identify vendors and integration requirements."""
+        question_lower = question.lower()
+        
+        # Vendor detection in queries
+        vendors_mentioned = []
+        vendor_keywords = {
+            'vmware': ['vmware', 'vcf', 'vcloud', 'esxi', 'vcenter', 'nsx', 'vsan'],
+            'cisco': ['cisco', 'nexus', 'catalyst', 'ios', 'nx-os', 'aci'],
+            'dell': ['dell', 'emc', 'powermax', 'unity', 'vxrail'],
+            'hpe': ['hpe', 'hewlett', 'packard', 'proliant', 'synergy']
+        }
+        
+        for vendor, keywords in vendor_keywords.items():
+            if any(keyword in question_lower for keyword in keywords):
+                vendors_mentioned.append(vendor)
+        
+        # Integration patterns
+        integration_patterns = {
+            'configuration': ['configure', 'setup', 'install', 'deploy'],
+            'compatibility': ['compatible', 'support', 'work with', 'integrate'],
+            'best_practices': ['best practice', 'recommend', 'should', 'optimal'],
+            'troubleshooting': ['issue', 'problem', 'error', 'troubleshoot', 'fix']
+        }
+        
+        query_type = 'general'
+        for pattern_type, keywords in integration_patterns.items():
+            if any(keyword in question_lower for keyword in keywords):
+                query_type = pattern_type
+                break
+        
+        return {
+            'vendors': vendors_mentioned,
+            'query_type': query_type,
+            'is_cross_vendor': len(vendors_mentioned) > 1,
+            'primary_vendor': vendors_mentioned[0] if vendors_mentioned else None
+        }
+    
+    def build_cross_vendor_context(self, query_analysis: Dict, search_results: List) -> str:
+        """Build enhanced context for cross-vendor queries."""
+        context_parts = []
+        
+        if query_analysis['is_cross_vendor']:
+            context_parts.append(f"CROSS-VENDOR INTEGRATION QUERY")
+            context_parts.append(f"Vendors involved: {', '.join(query_analysis['vendors'])}")
+            context_parts.append(f"Query type: {query_analysis['query_type']}")
+            context_parts.append("")
+        
+        # Group results by vendor
+        vendor_results = {}
+        for result in search_results:
+            vendor = getattr(result, 'metadata', {}).get('vendor', 'unknown')
+            if vendor not in vendor_results:
+                vendor_results[vendor] = []
+            vendor_results[vendor].append(result)
+        
+        # Build vendor-specific sections
+        for vendor, results in vendor_results.items():
+            context_parts.append(f"=== {vendor.upper()} DOCUMENTATION ===")
+            for result in results[:3]:  # Top 3 results per vendor
+                context_parts.append(str(result))
+                context_parts.append("")
+        
+        return "\n".join(context_parts)
+    
+    def enhance_cross_vendor_prompt(self, question: str, context: str, query_analysis: Dict) -> str:
+        """Create enhanced prompt for cross-vendor queries."""
+        base_prompt = f"""You are an expert enterprise infrastructure consultant with deep knowledge of multi-vendor integrations.
+
+Query Analysis:
+- Vendors involved: {', '.join(query_analysis['vendors']) if query_analysis['vendors'] else 'General'}
+- Query type: {query_analysis['query_type']}
+- Cross-vendor integration: {query_analysis['is_cross_vendor']}
+
+Context from vendor documentation:
+{context}
+
+Question: {question}
+
+Please provide a comprehensive answer that:
+1. Addresses the specific integration between the mentioned vendors
+2. Includes step-by-step configuration guidance when applicable
+3. Highlights compatibility considerations and requirements
+4. Mentions any known limitations or best practices
+5. Provides alternative approaches if multiple options exist
+
+Answer:"""
+        
+        return base_prompt
 
 class QueryServer:
-    """Flask-based query server for PDF Chat Appliance."""
+    """Flask-based query server for PDF Chat Appliance with enterprise features."""
     
     def __init__(self, config: Optional[Config] = None):
         """Initialize the query server."""
         self.config = config or Config()
         self.app = Flask(__name__)
         self.ingestion = PDFIngestion(self.config)
+        self.chat_db = ChatHistoryDB()
+        self.cross_vendor_query = EnterpriseCrossVendorQuery(self.config)
         self._setup_routes()
     
     def _setup_routes(self) -> None:
@@ -29,28 +162,184 @@ class QueryServer:
         
         @self.app.route("/query", methods=["POST"])
         def query():
-            """Handle PDF queries."""
+            """Handle PDF queries with cross-vendor intelligence."""
             try:
-                data = request.get_json()
+                try:
+                    data = request.get_json()
+                except BadRequest:
+                    return jsonify({"error": "Invalid JSON in request body"}), 400
                 if not data or "question" not in data:
                     return jsonify({"error": "Missing 'question' in request"}), 400
-                
                 question = data["question"]
+                top_k = data.get("top_k", 5)  # Increased for cross-vendor queries
+                user_id = data.get("user_id", "anonymous")
+                document_id = data.get("document_id", None)
+                
+                # Parse for cross-vendor intelligence
+                query_analysis = self.cross_vendor_query.parse_cross_vendor_query(question)
+                
+                # Retrieve chat history for context
+                chat_history = self.chat_db.get_history(user_id, document_id, limit=10)
+                context = "\n".join([f"User: {msg.message}\nBot: {msg.response}" for msg in chat_history])
+                
+                # Try to use vector store with enhanced cross-vendor search
+                try:
+                    # Load existing index (will need to support multi-collection search)
+                    index = self.ingestion.load_existing_index()
+                    
+                    # Configure query engine with enhanced parameters
+                    query_engine = index.as_query_engine(
+                        response_mode="tree_summarize",  # Better for cross-vendor synthesis
+                        similarity_top_k=top_k,
+                        verbose=True
+                    )
+                    
+                    # Enhanced prompt for cross-vendor queries
+                    if query_analysis['is_cross_vendor']:
+                        enhanced_question = self.cross_vendor_query.enhance_cross_vendor_prompt(
+                            question, "", query_analysis
+                        )
+                    else:
+                        enhanced_question = question
+                    
+                    # Process query with timeout handling
+                    import signal
+                    def timeout_handler(signum, frame):
+                        raise TimeoutError("Query timed out")
+                    
+                    signal.signal(signal.SIGALRM, timeout_handler)
+                    signal.alarm(45)  # Extended timeout for cross-vendor queries
+                    
+                    try:
+                        response = query_engine.query(enhanced_question)
+                        answer = str(response)
+                        signal.alarm(0)  # Cancel timeout
+                        
+                        # Add cross-vendor context if applicable
+                        if query_analysis['is_cross_vendor']:
+                            answer = f"🔗 Cross-Vendor Integration Analysis ({', '.join(query_analysis['vendors'])})\n\n{answer}"
+                        
+                    except TimeoutError:
+                        signal.alarm(0)
+                        raise Exception("Query timed out after 45 seconds")
+                    
+                    # Enhanced response metadata
+                    response_metadata = {
+                        "vendors_detected": query_analysis['vendors'],
+                        "query_type": query_analysis['query_type'],
+                        "is_cross_vendor": query_analysis['is_cross_vendor']
+                    }
+                    
+                    # Store chat history
+                    self.chat_db.add_message(user_id, document_id, question, answer)
+                    
+                    return jsonify({
+                        "answer": answer,
+                        "question": question,
+                        "metadata": response_metadata
+                    })
+                    
+                except Exception as e:
+                    print(f"[ERROR] Query processing failed: {e}", flush=True)
+                    
+                    # Enhanced fallback for cross-vendor queries
+                    if query_analysis['is_cross_vendor']:
+                        fallback_answer = f"""I understand you're asking about integrating {' and '.join(query_analysis['vendors'])} technologies. 
+                        
+While I'm having difficulty accessing the full documentation at the moment, here are some general considerations for {query_analysis['query_type']} scenarios:
+
+1. **Compatibility Check**: Verify version compatibility matrices between vendors
+2. **Network Requirements**: Ensure proper network connectivity and protocols
+3. **Documentation**: Consult both vendors' integration guides
+4. **Support**: Check if the integration is officially supported
+5. **Testing**: Always test in a lab environment first
+
+For specific configuration steps, please ensure the relevant vendor documentation has been uploaded to the system.
+
+Technical error: {str(e)}"""
+                    else:
+                        fallback_answer = f"I apologize, but I'm having difficulty processing your query right now. Technical error: {str(e)}"
+                    
+                    return jsonify({
+                        "answer": fallback_answer,
+                        "question": question,
+                        "warning": "Fallback response due to technical issues",
+                        "metadata": query_analysis
+                    })
+                    
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
+        
+        @self.app.route("/upload", methods=["POST"])
+        def upload_pdfs():
+            """Upload PDF files and ingest them."""
+            try:
+                if 'files' not in request.files:
+                    return jsonify({"error": "No files provided"}), 400
+                
+                files = request.files.getlist('files')
+                if not files or all(file.filename == '' for file in files):
+                    return jsonify({"error": "No files selected"}), 400
+                
+                uploaded_count = 0
+                supported_extensions = ['.pdf', '.txt', '.md', '.docx', '.csv', '.rtf']
+                for file in files:
+                    if file and any(file.filename.lower().endswith(ext) for ext in supported_extensions):
+                        # Save file to documents directory
+                        import os
+                        docs_dir = self.config.docs_dir
+                        os.makedirs(docs_dir, exist_ok=True)
+                        file_path = os.path.join(docs_dir, file.filename)
+                        file.save(file_path)
+                        uploaded_count += 1
+                
+                if uploaded_count > 0:
+                    # Try to ingest the documents (may fail due to embedding issues)
+                    try:
+                        self.ingestion.ingest_pdfs()
+                        return jsonify({
+                            "message": f"Successfully uploaded and processed {uploaded_count} PDF(s)",
+                            "uploaded_count": uploaded_count
+                        })
+                    except Exception as e:
+                        return jsonify({
+                            "message": f"Successfully uploaded {uploaded_count} PDF(s), but processing failed: {str(e)}",
+                            "uploaded_count": uploaded_count,
+                            "warning": "Document processing failed due to embedding configuration issues"
+                        })
+                else:
+                    return jsonify({"error": "No valid PDF files uploaded"}), 400
+                    
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
+        
+        @self.app.route("/context", methods=["POST"])
+        def get_context():
+            """Get relevant PDF context for a query (for Open WebUI integration)."""
+            try:
+                try:
+                    data = request.get_json()
+                except BadRequest:
+                    return jsonify({"error": "Invalid JSON in request body"}), 400
+                if not data or "query" not in data:
+                    return jsonify({"error": "Missing 'query' in request"}), 400
+                
+                query = data["query"]
                 top_k = data.get("top_k", 3)
                 
                 # Load existing index
                 index = self.ingestion.load_existing_index()
                 query_engine = index.as_query_engine()
                 
-                # Process query
-                response = query_engine.query(question)
+                # Get relevant context
+                response = query_engine.query(query)
                 
                 return jsonify({
-                    "answer": str(response),
-                    "question": question,
-                    "top_k": top_k
+                    "context": str(response),
+                    "query": query,
+                    "top_k": top_k,
+                    "source": "PDF Chat Appliance"
                 })
-                
             except Exception as e:
                 return jsonify({"error": str(e)}), 500
         
@@ -61,12 +350,19 @@ class QueryServer:
         
         @self.app.route("/", methods=["GET"])
         def index():
-            """Simple index page."""
-            return """
-            <h1>PDF Chat Appliance</h1>
-            <p>API is running. Use POST /query to ask questions about your PDFs.</p>
-            <p>Example: curl -X POST http://localhost:5000/query -H "Content-Type: application/json" -d '{"question": "What is this document about?"}'</p>
-            """
+            """API-only endpoint - redirect to Open WebUI."""
+            return jsonify({
+                "message": "PDF Chat Appliance API",
+                "description": "This is a backend-first appliance. Use Open WebUI at http://localhost:8080 for all document chat functionality.",
+                "endpoints": {
+                    "health": "/health",
+                    "query": "/query (document chat)",
+                    "upload": "/upload (document ingestion)",
+                    "context": "/context"
+                },
+                "frontend": "http://localhost:8080 (Open WebUI - ONLY interface)",
+                "note": "All document upload and chat functionality is accessed through Open WebUI"
+            })
     
     def run(self, host: Optional[str] = None, port: Optional[int] = None, debug: bool = False) -> None:
         """Run the Flask server."""

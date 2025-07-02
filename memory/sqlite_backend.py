@@ -20,6 +20,8 @@ class SQLiteMemoryBackend:
             session = SessionModel(**kwargs)
             db.add(session)
             db.commit()
+            db.refresh(session)
+            db.expunge(session)
             return session
 
     def add_message(self, **kwargs):
@@ -27,6 +29,8 @@ class SQLiteMemoryBackend:
             message = Message(**kwargs)
             db.add(message)
             db.commit()
+            db.refresh(message)
+            db.expunge(message)
             return message
 
     def add_document_insight(self, **kwargs):
@@ -34,23 +38,37 @@ class SQLiteMemoryBackend:
             insight = DocumentInsight(**kwargs)
             db.add(insight)
             db.commit()
+            db.refresh(insight)
+            db.expunge(insight)
             return insight
 
     def get_session(self, session_id):
         with self.Session() as db:
-            return db.get(SessionModel, session_id)
+            session = db.get(SessionModel, session_id)
+            if session:
+                db.expunge(session)
+            return session
 
     def get_messages(self, session_id):
         with self.Session() as db:
-            return db.query(Message).filter_by(session_id=session_id).all()
+            messages = db.query(Message).filter_by(session_id=session_id).all()
+            for message in messages:
+                db.expunge(message)
+            return messages
 
     def get_document_insight(self, doc_id):
         with self.Session() as db:
-            return db.query(DocumentInsight).filter_by(doc_id=doc_id).first()
+            insight = db.query(DocumentInsight).filter_by(doc_id=doc_id).first()
+            if insight:
+                db.expunge(insight)
+            return insight
 
     def list_sessions(self, user_id=None):
         with self.Session() as db:
             q = db.query(SessionModel)
             if user_id:
                 q = q.filter_by(user_id=user_id)
-            return q.all() 
+            sessions = q.all()
+            for session in sessions:
+                db.expunge(session)
+            return sessions 

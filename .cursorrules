@@ -1,0 +1,160 @@
+# Cursor AI Agent Configuration (.cursorrules)
+# Project: PDF Chat Appliance (v1.1.0-alpha)
+# Purpose: Local multi-model ingestion + chat pipeline for large PDF documents
+
+[agent]
+enabled = true
+strategy = "multi-agent"
+
+[defaults]
+max_mode = false                        # AUTO mode (no cloud billing)
+model = "claude-3.5-sonnet"             # Default fallback model
+
+[execution]
+# background_agent = false              # Optional: set to true for autonomous planning
+
+# -------------------------------
+# 🧠 Realignment Mode (Temporary)
+# -------------------------------
+[features]
+stack_realignment_mode = true          # Enables migration tasks and protected file updates
+allow_folder_restructure = true
+auto_namespace_vectors = true
+legacy_archive_path = "archive/legacy_stack"
+
+[models]
+chunking = "ollama:phi3"
+chat = "ollama:mistral"
+embedding = "sentence-transformers:nomic-embed-text-v1.5"
+
+# -------------------------------
+# 👷 Architect Team
+# -------------------------------
+[roles.architect1]
+model = "claude-4-sonnet"
+instructions = """
+Design modular ingestion → embedding → RAG architecture.
+Assign model usage to each phase, and document model responsibilities.
+"""
+
+[roles.architect2]
+model = "claude-3.5-sonnet"
+instructions = """
+Support architect1 with pipeline diagrams and folder design.
+Ensure project follows CURSOR_RULES.md structure and naming conventions.
+"""
+
+# -------------------------------
+# 🛠 Builder Team
+# -------------------------------
+[roles.builder1]
+model = "gpt-4.1"
+instructions = """
+Implement FastAPI pipeline to:
+- Receive uploaded PDF
+- Call Ollama (phi3) for chunking
+- Call embedding service for vector generation
+- Store in ChromaDB
+Ensure modularity and logging per phase.
+"""
+
+[roles.builder2]
+model = "claude-3.5-sonnet"
+instructions = """
+Implement helpers for:
+- Document storage
+- PDF text extraction
+- Model call wrappers
+Maintain folder structure defined by Architect.
+"""
+
+# -------------------------------
+# 👀 Reviewer Team
+# -------------------------------
+[roles.reviewer1]
+model = "gpt-4.1"
+instructions = """
+Review chunking + embedding modules for:
+- Logging coverage
+- Model response handling
+- Robust error handling
+Flag any assumptions or logic shortcuts.
+"""
+
+[roles.reviewer2]
+model = "claude-3.5-sonnet"
+instructions = """
+Check API and file naming, model isolation, and config usage.
+Approve only after reviewer1 validates logic and safety.
+"""
+
+# -------------------------------
+# ✅ Tester Team
+# -------------------------------
+[roles.tester1]
+model = "gpt-4.1"
+instructions = """
+Test full flow:
+- Upload → chunk → embed → chat
+- Multi-user vector namespace isolation
+- Memory limits during batch chunking
+"""
+
+[roles.tester2]
+model = "o3"
+instructions = """
+Run model-specific tests:
+- Response from phi3 to malformed inputs
+- Vector integrity (dimensionality, encoding)
+- Embedding timing and caching
+"""
+
+# -------------------------------
+# 📝 Logger & Documentation
+# -------------------------------
+[roles.logger]
+model = "o3"
+instructions = """
+Log model versions, chunk count, and latency to logs/{doc_id}/
+Update CHANGELOG.md and session_notes.md per architecture phase.
+"""
+
+[roles.docwriter]
+model = "claude-4-sonnet"
+instructions = """
+Update:
+- README.md with new stack and usage
+- PLANNING.md with architecture and rationale
+- CURSOR_RULES.md with model roles
+- SYSTEM_OVERVIEW.md with flow diagrams
+"""
+
+# -------------------------------
+# 🔒 File & Folder Rules
+# -------------------------------
+[protection]
+editable_files = [
+  "README.md",
+  "CURSOR_RULES.md",
+  "PLANNING.md",
+  "TASK.md",
+  "SYSTEM_OVERVIEW.md"
+]
+
+editable_folders = [
+  "api/",
+  "embeddings/",
+  "docker/",
+  "uploads/",
+  "chroma/",
+  "logs/",
+  "archive/"
+]
+
+cleanup_scripts = [
+  "docker-compose down -v",
+  "rm -rf ./chroma ./qdrant ./uploads ./logs",
+  "ollama pull phi3",
+  "ollama pull mistral",
+  "pip install sentence-transformers"
+]
