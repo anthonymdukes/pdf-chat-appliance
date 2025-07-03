@@ -70,3 +70,62 @@
   - Fix skipped test due to embedding dependencies
   - Add integration tests for complete workflow
   - Consider adding performance tests
+
+## ⚡ Phase 8: Performance Optimization (v1.3.0)
+
+### High Priority
+- [x] [system-architect] Update PLANNING.md with CPU-optimized ingestion strategy ✅ COMPLETED
+  - Document CPU-only model requirements (phi3:cpu, mistral:cpu, llama2:7b:cpu)
+  - Define performance monitoring metrics and logging structure
+  - Update architecture to reflect Qdrant and HuggingFace integration
+- [x] [api-builder] Implement CPU-optimized embed_all.py with performance monitoring ✅ COMPLETED
+  - Add timed loops for modular ingestion (1 PDF = 1 cycle)
+  - Implement detailed performance logging to `logs/perf/*.md`
+  - Add memory usage tracking and token counting
+  - Use all-MiniLM-L6-v2 for CPU-efficient embeddings
+- [x] [task-manager] Update TASK.md with performance optimization tasks ✅ COMPLETED
+  - Add Phase 8 for ingestion tuning and chunk flow routing
+  - Define performance benchmarking requirements
+  - Plan large document testing strategy
+
+### Medium Priority
+- [ ] [llm-specialist] Optimize model configuration for CPU-only processing
+  - Update `llm-config.mdc` to prioritize CPU models
+  - Configure phi3:cpu for chunking operations
+  - Set up fallback chain for CPU-optimized models
+  - Test model loading and performance on CPU-only systems
+- [ ] [api-builder] Implement chunk flow routing optimization
+  - Add intelligent chunk size selection based on document size
+  - Implement adaptive overlap based on content complexity
+  - Add parallel processing for large documents
+  - Optimize Qdrant collection management for performance
+- [ ] [observability] Enhance performance monitoring system
+  - Add real-time performance dashboards
+  - Implement alerting for performance degradation
+  - Create performance trend analysis
+  - Add system resource monitoring integration
+
+### Low Priority
+- [ ] [qa-tester] Test large document processing (8000+ pages)
+  - Create test suite for large document ingestion
+  - Benchmark performance against sample-vmware.pdf
+  - Test memory usage and system stability
+  - Validate chunk quality and retrieval accuracy
+- [ ] [docs-maintainer] Create performance optimization guides
+  - Document CPU optimization best practices
+  - Create troubleshooting guide for performance issues
+  - Add performance tuning recommendations
+  - Update deployment guides with performance considerations
+- [ ] [system-architect] Implement advanced chunking strategies
+  - Add semantic chunking for better context preservation
+  - Implement hierarchical chunking for complex documents
+  - Add metadata-aware chunking for structured documents
+  - Optimize chunk overlap strategies for different content types
+
+### Performance Benchmarks Required
+- [ ] Baseline performance measurement (current system)
+- [ ] CPU-optimized model performance testing
+- [ ] Large document processing benchmarks (1000+ pages)
+- [ ] Memory usage optimization validation
+- [ ] End-to-end query performance testing
+- [ ] System resource utilization analysis

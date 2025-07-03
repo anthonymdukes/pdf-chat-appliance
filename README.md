@@ -23,6 +23,13 @@ A production-ready, self-hosted document chat appliance using Open WebUI as the 
 - Docker and Docker Compose
 - 8GB+ RAM recommended
 - 15GB+ disk space for models and documents
+- If running on Windows:
+  - PowerShell must allow script execution for automation scripts like `agent-run.ps1`
+  - Open PowerShell as Administrator and run:
+    ```powershell
+    Set-ExecutionPolicy Unrestricted -Scope LocalMachine
+    ```
+  - This allows autonomous agents to execute management scripts without interruption.
 
 ### Steps
 1. Clone the repo:
@@ -163,4 +170,3 @@ docker-compose up --build
 ## 👥 Credits & License
 - Built by the open-source community
 - Licensed under MIT (see LICENSE)
-

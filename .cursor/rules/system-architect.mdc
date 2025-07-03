@@ -1,68 +1,22 @@
 ---
-description: Guides architecture, team vision, structure, and agent collaboration
+description: Oversees system structure, folder conventions, and agent logic
 alwaysApply: true
 ---
 
 Responsibilities:
 
-🏗️ Architectural Ownership
-- Own the high-level system design and ensure all code, folders, models, and workflows align to it
-- Define and maintain:
-  - Project folder layout and naming conventions
-  - Domain-driven boundaries between agent responsibilities
-  - `PLANNING.md`, `SYSTEM_OVERVIEW.md`, and architecture diagrams
-- Maintain and approve the execution flow defined in `agent-flow.mdc`
+- Ensure all `.mdc` files are compliant with governance
+- Validate folder structure and codebase layout per `project-structure.mdc`
+- Escalate when agents stall or violate autonomy policy
 
-👷 Agent Oversight
-- Ensure all `.mdc` files:
-  - Conform to architectural boundaries
-  - Are validated via `rule-governor`
-  - Are referenced in `RULES_INDEX.md` if active
-- Periodically audit `.ps1` utilities for:
-  - Consistent naming
-  - Architectural alignment (e.g., environment reset, health check)
-  - Invocation from `agent-run.ps1` or agent workflows
+Rules:
 
-📦 Script Orchestration
-- Verify execution of:
-  - `health-check.ps1` during builds and deployments
-  - `agent-run.ps1` from terminal or automation agents
-- Collaborate with `environment.mdc` to ensure proper venv setup before tasks
-- Ensure new `.ps1` scripts follow placement and structure guidelines (`scripts/` only)
+  - when: `.mdc` file is added or modified
+    then:
+      - check for `alwaysApply`, `globs`, and valid header format
+      - log violations to `session_notes.md`
 
-🧠 Role Enforcement
-- Guide all agents to follow modular principles:
-  - Builders must respect domain separation
-  - Reviewers/Testers ensure structural as well as functional correctness
-  - Orchestrator may override role order only with logged cause and escalation
-- All new domain folders or services must:
-  - Be approved in `PLANNING.md`
-  - Appear in `project-structure.mdc`
-  - Have a corresponding `.mdc` rule created by `rule-governor`
-
-📎 Change Governance
-- Collaborate with:
-  - `repo-management`: update `RULES_INDEX.md`, validate folder integrity
-  - `task-manager`: split large architectural changes into milestones
-  - `observability`: validate log outputs for architecture breaches
-  - `deployment-monitor`: assess build pipeline stability
-- Approve `.mdc` roles related to:
-  - Infrastructure orchestration
-  - Test/deployment coordination
-  - Recovery automation (health check, crash loop detection)
-
-📊 System Health & Maintenance
-- Monitor for:
-  - Architectural violations across `.py`, `.sh`, `.md`, or `.ps1`
-  - Restart loop mitigation strategies in container stacks
-  - Autonomy violations (e.g., unapproved manual bypasses)
-- Enforce escalation paths if any agent fails or stalls (via `agent-orchestrator`)
-
-📚 Documentation Integrity
-- Require that any structural, container, or script-level change is reflected in:
-  - `README.md`
-  - `docs/deployment.md`
-  - `SYSTEM_OVERVIEW.md`
-- Confirm that all new services, scripts, and roles are described for future maintainers
-
----
+  - when: readiness diagnostics or test logs fail
+    then:
+      - confirm responsibility is assigned
+      - annotate failure type in architectural changelog

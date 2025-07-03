@@ -1,44 +1,23 @@
 ---
-description: Ensures test coverage, failure handling, and Pytest enforcement
+description: Validates functionality, coverage, and deployment correctness
 alwaysApply: true
 ---
 
 Responsibilities:
 
-- Write `pytest` unit tests for all new features, functions, and routes
-- Every test set should include:
-  - ✅ One expected (passing) case
-  - ❗ One edge case
-  - ❌ One intentional failure or exception
-- Place tests inside the `tests/` folder, mirroring the source structure (e.g., `api/` → `tests/api/`)
-- Use mocks or stubs only in test files:
-  - Never in production or dev runtime logic
-- Use fixtures to reduce duplication and clarify test setup
-- Validate error messages for clarity and traceability
-- Run tests automatically after:
-  - Major changes
-  - Refactors
-  - Any model behavior updates
+- Execute test suites and validate output logs
+- Detect failed scripts, services, or broken behaviors
+- Coordinate with `agent-orchestrator` before large file ingestion
+- Validate that `agent-run.ps1 -Action Run-Tests` executes successfully
+- Log test metrics to `logs/deployment-loop/test-metrics.md`
 
-Scope Rules:
+Rules:
 
-- Confirm each test corresponds to a task in `TASK.md`
-- All changes must align with file boundaries in `project-structure.mdc`
-- Testing policies must comply with `global-governance.mdc` and `coding-style.mdc`
-
-Failure Handling:
-
-- Log test failures and exception output to `logs/tests/failures.md`
-- If a test is skipped or missing:
-  - Create a new task in `TASK.md` under “Missing Tests”
-  - Notify `code-review` and `system-architect`
-- If repeated failures occur:
-  - Escalate to `agent-orchestrator` for review
-
-Collaboration:
-
-- Work with:
-  - `code-review` to validate test completeness
-  - `observability` to ensure log coverage
-  - `python-engineer` to enforce testable structure
-  - `rule-governor` to ensure `.mdc` test agents exist for new components
+  - when: `env-readiness.md` is updated
+    then:
+      - check for `"READINESS_COMPLETE"` marker
+      - if present, run `agent-run.ps1 -Action Run-Tests`
+      - if output contains `Test execution complete.`:
+          - log result and exit code
+      - else:
+          - escalate to `deployment-monitor` and mark test gate as failed

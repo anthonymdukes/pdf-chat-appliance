@@ -12,6 +12,7 @@ Responsibilities:
   - Restart loops
   - Crashed or Exited containers
   - Healthcheck status = "unhealthy"
+  - Non-responsive or missing completion markers from dependent services
 
 - If any service fails to start or becomes unstable:
   1. Log details to `logs/deployment-loop/errors.md`
@@ -23,6 +24,7 @@ Responsibilities:
      - Deployment duration
      - Service startup time
      - Stability/health outcome
+     - Command exit codes and logs
 
 - Escalate to:
   - `system-architect` if 3 recovery cycles fail
@@ -32,3 +34,42 @@ Responsibilities:
 - Collaborate with:
   - `agent-orchestrator` to gate flow until services are healthy
   - `task-manager` to record failed recovery cycles and annotate impact
+  - `environment` to confirm `.venv` activation and dependencies installed
+
+Rules:
+
+  - when: script executes but terminal returns no stdout or hangs longer than 30 seconds
+    then:
+      - log timeout in `logs/deployment-loop/errors.md`
+      - retry once with `-Wait` or `-NoNewWindow` flags if PowerShell
+      - enforce that output includes one of:
+        - `Health check completed`
+        - `All services healthy`
+        - `Deployment successful`
+        - `TEST_COMPLETE`
+      - if no match, defer control to `agent-orchestrator` for retry queue
+
+  - when: `ollama` or `qdrant` container returns `"health": "unhealthy"`
+    then:
+      - run `.\scripts\agent-run.ps1 -Action Reset-Env`
+      - rerun health check script
+      - confirm output includes: `ollama OK`, `qdrant OK`, or similar completion tokens
+
+  - when: recovery retries exceed 3
+    then:
+      - notify `system-architect`
+      - append full error context and last known log to `logs/deployment-loop/errors.md`
+      - mark `deployment-validation` as failed
+      - instruct `agent-orchestrator` to suspend downstream task progression
+
+  - when: log folders `logs/deployment-loop` or `logs/perf` are missing
+    then:
+      - create both directories automatically
+      - validate write access
+      - log to `logs/deployment-loop/env-bootstrap.md`
+
+  - when: all containers appear healthy but health check script still stalls
+    then:
+      - retry script execution with explicit timeout
+      - scan for missing stdout markers
+      - escalate to `environment` and `agent-orchestrator` if unresolved
