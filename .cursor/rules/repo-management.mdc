@@ -1,55 +1,52 @@
 ---
-description: Maintains repo structure, CI config, changelogs, and commit hygiene
-alwaysApply: false
+description: >
+  Manages repository version control, backup, and CI/CD integration for the PDF Chat Appliance.
+  Enforces Git (or VCS) best practices, coordinates safe merges, tagging, and project backups, and supports audit/compliance for enterprise-readiness.
+alwaysApply: true
+manual: false
 globs:
-  - 'CHANGELOG.md'
-  - '.github/**/*'
+  - '.git/**'
+  - '*'
+  - 'pdfchat/**'
+  - 'backend/**'
+  - 'api/**'
+  - 'db/**'
+  - 'llm/**'
+  - 'config/**'
+  - 'docs/**'
+  - 'scripts/**'
+  - 'tests/**'
+  - '.ai/**'
+  - '.cursor/rules/**/*.mdc'
+  - 'README.md'
+  - 'PLANNING.md'
 ---
 
-Responsibilities:
+# Repo Management Agent Rule for PDF Chat Appliance
 
-- Maintain structural integrity of the repository:
-  - Validate required folders: `api/`, `embeddings/`, `docker/`, `tests/`, `docs/`, `.github/`, `scripts/`
-  - Ensure essential files exist and are current:
-    - `README.md`, `PLANNING.md`, `TASK.md`, `CHANGELOG.md`, `.gitignore`, `requirements.txt`, `pyproject.toml`
+## Responsibilities
 
-- Manage Git cleanliness:
-  - No uncommitted tracked files during agent execution
-  - `.env`, `.secrets`, and sensitive configs must be excluded via `.gitignore`
-  - Ensure commits follow [semantic commit](https://www.conventionalcommits.org/) format:
-    - `feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `chore:`
+- Enforce all repository version control, backup, and branching/tagging standards.
+- Automate regular project backups, CI/CD integration, and ensure atomic, traceable changes.
+- Block workflow progress or agent action if version control is out of sync, backup is failing, or branches/tags do not match project status.
+- Support audit logging and compliance as required by project or enterprise needs.
+- Collaborate with code-review, docs-maintainer, and project-structure to keep the repo healthy and navigable.
+- Log all major repo events, merges, and backup milestones in `session_notes.md`.
 
-- Maintain CI config and GitHub Actions:
-  - Validate `.github/workflows/*` for:
-    - Testing, linting, branch rules, and deploy readiness
-  - Prevent unsafe or broken CI triggers from being committed
+## Repo Management Rules
 
-- Manage CHANGELOG:
-  - Auto-update version blocks
-  - Include summaries of features, fixes, refactors, and role changes
-  - Validate version headers follow semantic versioning (e.g., `## [1.2.0] - YYYY-MM-DD`)
+- Only allow merges, pushes, or releases when all tests pass and docs are current.
+- Block forced pushes, destructive actions, or unreviewed merges.
+- Automate backup, tagging, and release notes for every significant version.
+- Document backup and VCS strategies in `PLANNING.md` or `README.md`.
 
-- Auto-scaffold project folders:
-  - If a referenced folder (e.g., `docs/`, `utils/`) is missing but expected
-  - If a `.mdc` rule exists without a corresponding domain folder
+## Best Practices
 
-Collaboration:
+- Use `globs:` to watch all files, core directories, and VCS config.
+- Integrate with all CI/CD and backup automation for safe, rapid iteration.
+- Audit all repo changes for traceability, compliance, and easy rollback.
+- Keep all repo health actions documented and visible to the team.
 
-- Work with:
-  - `rule-governor` to identify outdated or unused `.mdc` rules
-  - `system-architect` to evolve or restructure top-level folder design
-  - `task-manager` to record all structural TODOs in `TASK.md`
-  - `docs-maintainer` to keep file layout changes reflected in `README.md`
+---
 
-Governance:
-
-- Enforce file write boundaries from `project-structure.mdc`
-- Never allow deletion or mutation of `.mdc` files without policy approval in `global-governance.mdc`
-- Maintain `RULES_INDEX.md` as the official registry of agent rules and responsibilities
-
-Escalation:
-
-- If CI, folder structure, or changelogs are found misaligned:
-  - Log issue in `session_notes.md`
-  - Add a cleanup task to `TASK.md`
-  - Alert `system-architect` and halt unsafe commits
+If repo management, backup, or VCS standards are violated, block further agent or human action and raise a descriptive error for user remediation.

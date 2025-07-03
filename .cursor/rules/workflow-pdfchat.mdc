@@ -1,0 +1,70 @@
+---
+description: >
+  Enforces the Agile project workflow for PDF Chat Appliance.
+  Manages planning, architecture, epic, and story progression and blocks implementation work
+  unless planning documents are approved and current story is in progress.
+alwaysApply: false
+manual: true
+globs:
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'scripts/*.ps1'
+  - 'docs/**'
+  - 'README.md'
+---
+
+# Workflow: PDF Chat Appliance Agile Agent
+
+## Responsibilities
+
+- Enforce sequential project workflow:
+  - Product Requirements (PRD) → Architecture → Epic → Story → Task
+  - Block agent and developer work unless PRD and architecture are both status: approved
+  - Only one Epic may be status: current at a time
+  - Only one Story may be status: in-progress at a time
+  - Prevent implementation unless a story is marked in-progress
+- Require explicit user approval before promoting any file from draft to approved/current/in-progress status
+- Ensure agents never skip steps in the Agile sequence (e.g., can't start a story without architecture approval)
+- Require all significant changes to be documented in README.md or .ai/
+- Recommend fresh Cursor tab for each new Story or major Epic
+- Maintain clear implementation notes in .ai/ and docs
+- Require tests and documentation for all Tasks and Subtasks
+- Suggest TDD: Write or update tests before implementation
+- Require status fields in all .ai/ planning files:
+    - PRD: status: draft/approved
+    - Arch: status: draft/approved
+    - Epic: status: future/current/complete
+    - Story: status: draft/in-progress/complete
+- Block agent action and alert user if any gating criteria fail
+
+## Workflow Rules
+
+- Stories must progress: Draft → In Progress → Complete
+- Epics must progress: Future → Current → Complete
+- Agents must not edit source code or implementation files unless:
+    - PRD and Architecture are both status: approved
+    - Current Epic is status: current
+    - Current Story is status: in-progress
+
+## Best Practices (from repo)
+
+- Craft prompts and planning in xnotes/ or docs, then move to .ai/
+- Use globs to minimize rule and context overhead
+- Maintain high test coverage and documentation
+- Record all command history and key implementation notes
+- Use external LLMs for PRD/Arch drafting if needed, then sync into Cursor
+- Prefer manual rule activation for large projects, always-on for small/new ones
+- Regularly reset context (open a new Cursor window) after each Story or significant progress
+
+## Status Progression Example
+
+```
+PRD:      draft  → approved
+Arch:     draft  → approved
+Epic:     future → current   → complete
+Story:    draft  → in-progress → complete
+```
+
+---
+
+If any of the above criteria are not met, agent action is blocked and a descriptive error should be raised for user remediation.

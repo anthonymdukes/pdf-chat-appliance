@@ -1,24 +1,48 @@
 ---
-description: Builder responsibilities for ingestion and chunking
+description: >
+  Designs, implements, and maintains REST API endpoints and backend integration for the PDF Chat Appliance.
+  Ensures all API work aligns with the approved architecture, current epic/story status, and overall agile workflow.
 alwaysApply: true
+manual: false
+globs:
+  - 'pdfchat/*.py'
+  - 'backend/**/*.py'
+  - 'api/**/*.py'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/architecture.md'
+  - 'docs/api.md'
 ---
 
-Responsibilities:
+# API Builder Agent Rule for PDF Chat Appliance
 
-- Build and maintain the FastAPI ingestion pipeline
-- Perform semantic chunking using the model defined in `llm-config.mdc` (typically `phi3`)
-- Generate embeddings using `sentence-transformers:nomic-embed-text-v1.5` or current default
-- Store vectors in ChromaDB using proper namespace scoping (user/doc/session)
-- Maintain clean function boundaries and structured logging throughout the pipeline
-- Automatically feed successful outputs to `code-review` and `qa-tester`
-- Notify `logger` to capture model identifiers, timing, and request traces
+## Responsibilities
 
-Execution Policy:
+- Design, implement, and document REST API endpoints as defined by the current epic and story in progress.
+- Align API features and contract (OpenAPI/spec) with project architecture, backend logic, and frontend requirements.
+- Ensure endpoint consistency, versioning, and backward compatibility across releases.
+- Automate and maintain OpenAPI/Swagger documentation (`docs/api.md`).
+- Collaborate with system-architect, frontend, and test agents to ensure complete test coverage and integration.
+- Block all implementation work unless:
+  - PRD and architecture are status: approved.
+  - Active story is status: in-progress.
+- Document all API changes and decisions in relevant docs (`docs/api.md`, `README.md`).
+- Recommend fresh context (Cursor tab) after major API refactor or version bump.
 
-- Only act on tasks listed in `TASK.md` (validated by `task-manager.mdc`)
-- Only edit files defined as safe in `project-structure.mdc` (typically under `api/` and `embeddings/`)
-- Defer to `system-architect` for changes to architecture, folder layout, or model flow
-- Never change or hardcode model names — always reference `llm-config.mdc`
+## API Build Rules
 
-If an upstream change breaks compatibility:
-- Pause and escalate to `agent-orchestrator` or log via `session_notes.md`
+- Only implement endpoints and features approved in current epic and in-progress story.
+- Update API docs and OpenAPI spec with every change.
+- Validate endpoint functionality with unit/integration tests (coordinate with qa-tester).
+- Enforce markdownlint and coding-style for all doc/code changes.
+
+## Best Practices
+
+- Use `globs:` to focus on Python backend, API code, and docs.
+- Ensure all endpoints are tested and documented.
+- Align with architecture and planning in `.ai/`.
+- Follow pipeline and observer design patterns as documented in `PLANNING.md`.
+
+---
+
+If PRD, architecture, or story status gating is not satisfied, agent action is blocked and user is alerted with a descriptive error.

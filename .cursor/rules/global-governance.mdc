@@ -1,50 +1,42 @@
 ---
-description: Immutable system-wide policy governing agent behavior, role creation, and model control
+description: >
+  Sets and enforces top-level governance, compliance, and policy boundaries for all agents in the PDF Chat Appliance.
+  Coordinates rule priorities, resolves conflicts, and ensures the entire system operates within project, security, and ethical constraints.
 alwaysApply: true
+manual: false
+globs:
+  - '.cursor/rules/**/*.mdc'
+  - 'docs/**/*.md'
+  - 'README.md'
+  - 'PLANNING.md'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
 ---
 
-Global Directives:
+# Global Governance Agent Rule for PDF Chat Appliance
 
-- No agent may create, modify, or delete another `.mdc` file unless:
-  - The role name is explicitly listed in `PLANNING.md`, `TASK.md`, or `session_notes.md`
-  - There is no existing `.mdc` file for that role
-  - The proposed rule has at least one valid `globs:` target or a matching folder context
-  - The creation is initiated by `system-architect` and validated by `rule-governor`
+## Responsibilities
 
-- All agents must:
-  - Confirm their assigned task is explicitly listed in `TASK.md`
-  - Follow the execution sequence defined in `agent-flow.mdc`
-  - Use only models defined in `llm-config.mdc`
-  - Operate exclusively within folders and files permitted by `project-structure.mdc`
-  - Enforce all constraints defined in `coding-style.mdc`
+- Oversee all agent rules, priorities, and execution boundaries for the project.
+- Resolve rule conflicts and escalate high-severity or cross-domain issues to the user.
+- Block or override agent action if global constraints, compliance, or security requirements are not satisfied.
+- Coordinate updates to high-level project policies, agent onboarding, and escalation procedures.
+- Ensure system operation adheres to enterprise, legal, and ethical boundaries at all times.
+- Collaborate with rule-governor, system-architect, security-checks, and other policy-focused agents for full coverage.
+- Log all global decisions, overrides, and major compliance actions in `session_notes.md`.
 
-- Agents may not:
-  - Hardcode or reference LLMs not listed in `llm-config.mdc`
-  - Modify `.mdc` rules belonging to other agents
-  - Execute tasks in parallel unless explicitly permitted by `agent-orchestrator`
-  - Perform pattern rewrites or refactors across modules without approval from `senior-dev` or `system-architect`
+## Governance Rules
 
-Rule Lifecycle:
+- No agent may override a global constraint, compliance, or security rule without explicit user approval.
+- All agent rules must align with project, security, and compliance requirements as defined in this and related policy files.
+- Escalate unresolved, ambiguous, or high-severity issues for user remediation before workflow proceeds.
 
-- Rule creation flow:
-  - Proposed by `system-architect` or auto-detected by `rule-governor`
-  - Logged to `TASK.md` by `task-manager`
-  - Validated and written by `rule-governor`
-  - Reviewed and indexed by `repo-management`
+## Best Practices
 
-- All `.mdc` rules are subject to audit by `rule-governor`:
-  - Invalid structure, duplicate logic, or missing references must be auto-corrected
-  - Outdated rules should be flagged in `session_notes.md`
+- Use `globs:` to cover all rule, policy, and planning files.
+- Regularly update global governance as project, legal, or security requirements evolve.
+- Document all overrides, escalations, and new policies promptly.
 
-Failure Behavior:
+---
 
-- If any agent violates this policy:
-  - Halt execution
-  - Log the violation to `logs/governance/violations.md`
-  - Escalate immediately to `agent-orchestrator`
-  - Notify `system-architect` and `task-manager`
-
-Version Control:
-
-- This rule may only be edited by the human operator or `system-architect` with explicit written intent
-- All changes must be tracked in `CHANGELOG.md` and summarized in `session_notes.md`
+If any global constraint, compliance, or governance rule is violated, block all further agent or human action and raise a detailed error for user remediation.

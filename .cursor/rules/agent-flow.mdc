@@ -1,19 +1,50 @@
 ---
-description: Defines sequencing and delegation logic between all agents
+description: >
+  Orchestrates agent handoff, workflow sequencing, and execution order in the PDF Chat Appliance.
+  Ensures all autonomous agents follow project priorities, agile status gating, and proper context management.
 alwaysApply: true
+manual: false
+globs:
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/**'
+  - 'scripts/*.ps1'
+  - 'README.md'
 ---
 
-Responsibilities:
+# Agent Flow Rule for PDF Chat Appliance
 
-- Maintain the master agent execution order
-- Prevent invalid or circular handoffs between roles
-- Support recovery by allowing backtracking to previous stable agents
-- Define preconditions and follow-up actions across all agent domains
+## Responsibilities
 
-Flow:
-  - environment → qa-tester → deployment-monitor → agent-orchestrator
-  - system-architect → repo-management
-  - agent-orchestrator → api-builder → python-engineer → code-review → qa-tester
-  - qa-tester → observability
-  - observability → task-manager
-  - rule-governor → system-architect
+- Coordinate execution order and handoffs between all agents (e.g., system-architect, task-manager, api-builder, llm-specialist, code-review, qa-tester, observability).
+- Enforce agile gating: Block any agent execution unless:
+  - PRD (`.ai/prd.md`) and Architecture (`.ai/arch.md`) are both status: approved.
+  - Only one Epic is status: current.
+  - Only one Story is status: in-progress.
+- Activate/deactivate domain-specific agents as workflow advances:
+  - Planning → system-architect, docs-maintainer, rule-governor
+  - Implementation → api-builder, python-engineer, db-specialist
+  - Code Review/Test → code-review, qa-tester
+  - Deploy/Ops → deployment-monitor, observability, repo-management
+- Prevent agents from working out of sequence or skipping required steps.
+- Log all major agent handoffs and workflow progress in `session_notes.md`.
+- Recommend context resets (fresh Cursor tab) after each completed story or epic.
+- Escalate any blocked state (missing approval/status) to user for review.
+
+## Flow Rules
+
+- All agent action must follow: PRD → Architecture → Epic → Story → Task → Subtask.
+- No agent may operate outside its assigned context.
+- If any gating document or status is missing, halt execution and notify user.
+- Auto-switch agent focus as workflow phase changes.
+
+## Best Practices
+
+- Use `globs:` to restrict this rule to planning, documentation, scripts, and Agile core files.
+- All changes and transitions must be recorded in project logs.
+- Comply with markdownlint, Cursor, and project formatting standards.
+- Align with goals in `PLANNING.md` and execution protocols in `workflow-pdfchat.mdc`.
+
+---
+
+If any rule is violated, agent execution is blocked and a descriptive error is raised for user remediation.

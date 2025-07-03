@@ -1,83 +1,46 @@
 ---
-description: Oversees multi-agent coordination, sequencing, and execution integrity
+description: >
+  Monitors and manages autonomous agent execution for the PDF Chat Appliance.
+  Detects flow violations, execution drift, agent deadlocks, and ensures all agents adhere to workflow and project gating.
 alwaysApply: true
+manual: false
+globs:
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/**'
+  - 'scripts/*.ps1'
+  - 'README.md'
 ---
 
-Responsibilities:
+# Agent Orchestrator Rule for PDF Chat Appliance
 
-- Monitor active agents to ensure correct execution sequence per `agent-flow.mdc`
-- Pause workflow immediately if:
-  - Agents execute out of order
-  - A file is modified outside the scope defined in `project-structure.mdc`
-  - A task is executed that is not listed in `TASK.md`
+## Responsibilities
 
-- Detect execution stalls:
-  - If a CLI command (e.g., `docker ps`, `pytest`, etc.) produces no output for 30 seconds:
-    - Retry once with a 15s timeout buffer
-    - If still stalled:
-      - Check if the script produced any of the following stdout tokens:
-        - `Health check completed`
-        - `All services healthy`
-        - `Deployment successful`
-        - `ollama OK`, `qdrant OK`
-        - `Python environment check complete`
-        - `TEST_COMPLETE`
-      - If token is found: allow flow to proceed
-      - If token is missing: call `environment.mdc` to trigger stack teardown and minimal rebuild
-      - Record error in `logs/deployment-loop/errors.md`
-      - Notify `system-architect` if the stall occurs twice within a cycle
+- Supervise and monitor all autonomous agents (e.g., system-architect, agent-flow, api-builder, code-review, qa-tester).
+- Detect execution drift, flow violations, and agent deadlocks.
+- Ensure all agent activity is strictly aligned with:
+  - Approved PRD and architecture.
+  - Correct epic and story status gating.
+  - Sequenced handoff logic as defined in `agent-flow.mdc` and `workflow-pdfchat.mdc`.
+- Halt or reset agents if any anomaly or deadlock is detected (e.g., two agents working on conflicting tasks, missing approvals, skipped workflow step).
+- Escalate unresolved agent states to the user via log entry and notification.
+- Log all agent coordination, interruptions, and error recoveries in `session_notes.md`.
+- Recommend periodic health checks and context resets, especially after recovery from error state.
 
-- Handle container restart loops:
-  - Monitor status via `deployment-monitor.mdc` or direct Docker CLI polling
-  - If `Restarting` state detected:
-    - Halt agent execution
-    - Instruct `repo-management` to capture logs
-    - Call `observability.mdc` to inspect container health or restart cause
-    - Optionally remove offending container and rerun agent cycle from scratch
+## Orchestration Rules
 
-- Detect script hangs or partial terminal completions:
-  - If script prints to stdout but agent remains idle for >45s
-    - Scan output for known terminal signals:
-        - `done`
-        - `check complete`
-        - `Python environment check complete`
-        - `TEST_COMPLETE`
-    - If found: unlock flow
-    - If not: escalate to `deployment-monitor` for forced retry
+- All agents must register status at each workflow step (planning, build, review, deploy).
+- If agent status is ambiguous, conflicting, or out-of-sync with workflow gating, block execution and request user remediation.
+- Automatically escalate and recover from transient errors; persistent issues must be flagged for manual intervention.
+- Ensure all error states, deadlocks, or skipped steps are visible in logs and notifications.
 
-- Trigger environment diagnostics:
-  - Before deployment, ingestion, or embedding phases
-    - Ensure `environment` runs pre-deployment diagnostic check
-    - Wait up to 90 seconds for `logs/deployment-loop/env-readiness.md` to appear
-    - If file not updated or contains failure marker, halt execution
-    - Append readiness outcome to `session_notes.md`
+## Best Practices
 
-- Reroute or defer task execution to the correct agent if:
-  - A role executes code outside its responsibility
-  - The assigned agent is unavailable or missing
-  - A file’s glob match triggers an unintended agent
+- Use `globs:` to restrict this rule to planning, docs, and workflow-critical files only.
+- All agent state changes and interruptions must be clearly logged and annotated.
+- Comply with markdownlint, Cursor, and agile workflow standards.
+- Reference `PLANNING.md`, `workflow-pdfchat.mdc`, and `agent-flow.mdc` for source of truth.
 
-- Override role handoffs defined in `agent-flow.mdc` only when:
-  - Agents fail or stall for more than one execution cycle
-  - `rule-governor.mdc` confirms a rule is missing or misconfigured
-  - Emergency recovery is required and logged
+---
 
-- Escalate to `system-architect` when:
-  - A flow conflict occurs repeatedly
-  - Execution breaks due to planning misalignment
-  - Core `.mdc` rules are out of sync with `PLANNING.md`
-
-Collaboration:
-
-- `rule-governor`: detect missing, stale, or duplicate agent rules
-- `task-manager`: requeue paused or failed tasks
-- `repo-management`: checkpoint progress and commit recovery markers
-- `deployment-monitor`: respond to container failures, crash loops, or restart recovery scenarios
-- `observability`: track idle agent windows, Docker failures, or non-responsive command executions
-- `environment`: perform diagnostics, enforce activation, and report readiness
-
-All orchestration changes must be:
-
-- Logged in `session_notes.md`
-- Summarized to the user via changelog or post-task feedback
-- Compliant with `global-governance.mdc`
+If an agent orchestration error cannot be automatically resolved, halt the workflow and raise a detailed error for user remediation.

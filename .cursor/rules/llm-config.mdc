@@ -1,65 +1,44 @@
 ---
-description: Controls model routing, backend selection, and AUTO-mode execution targets
+description: >
+  Manages all configuration, selection, and routing for large language models (LLMs) and embedding models used in the PDF Chat Appliance.
+  Ensures model settings are centrally maintained, versioned, and aligned with project architecture and agile status gating.
 alwaysApply: true
+manual: false
+globs:
+  - 'config/*.py'
+  - 'backend/**/*.py'
+  - 'pdfchat/**/*.py'
+  - 'api/**/*.py'
+  - 'llm/**'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/architecture.md'
 ---
 
-### LLM Architecture
+# LLM Config Agent Rule for PDF Chat Appliance
 
-- Agent Mode: Multi-agent with role-specific model preferences
-- Execution Mode: AUTO-enabled, no manual confirmation required
-- Environment: Local Ollama runtime (CPU or GPU-accelerated), fallback to cloud when unreachable
-- Model control is governed by `llm-specialist`, validated by `system-architect`, and enforced by `agent-orchestrator`
+## Responsibilities
 
----
+- Define, maintain, and update all LLM and embedding model configurations (Ollama, Mistral, phi3:cpu, nomic-embed, HuggingFace, etc.).
+- Ensure model selection and routing logic aligns with project architecture and agile planning.
+- Support swapping models (CPU/GPU, local/cloud) without breaking workflows or agents.
+- Coordinate with llm-specialist, api-builder, and prompt-strategy to keep model settings current and effective.
+- Version all model config changes and document impacts in `docs/architecture.md` and config files.
+- Block agent or workflow actions if required models, embeddings, or settings are missing or misconfigured.
+- Recommend upgrades, optimization, or fallback strategies as new models or features are released.
 
-### Model Assignments
+## LLM Config Rules
 
-| Task / Role         | Preferred Model                                |
-|---------------------|-------------------------------------------------|
-| Embedding           | `sentence-transformers:nomic-embed-text-v1.5`   |
-| Chunking (split)    | `ollama:phi3`                                   |
-| RAG Completion      | `ollama:mistral`                                |
-| Code Generation     | `gpt-4` or `claude-3-sonnet` (Pro fallback)     |
-| Auto-rewrite / Fix  | `gpt-4` or `cursor:default`                     |
-| Planning            | `mistral` or `gpt-3.5-turbo`                    |
+- Only update config if PRD and architecture are status: approved and active story is in progress.
+- All config changes must be documented and versioned in code and docs.
+- Validate model settings before runtime (test imports, API endpoints, resource availability).
 
-> Model assignments must not be overridden by default. All reassignment requests must route through `llm-specialist`.
+## Best Practices
 
----
-
-### Fallback and Failover
-
-- Retry once with fallback if primary model fails
-- If unresolvable:
-  - Log to `logs/llm_failures/{agent}/{timestamp}.md`
-  - Notify `llm-specialist` for override or downgrade
-- Prefer lowest-latency local model unless override is defined in:
-  - `PLANNING.md`
-  - `llm-specialist.mdc`
-
----
-
-### Behavior Guidelines
-
-- No agent may hardcode model names in logic or responses
-- All agents must reference this file before assigning or invoking any LLM
-- Model behavior should follow architecture and flow as defined in `agent-flow.mdc`
-- Planning-stage agents may propose models but may not bind them to execution roles
+- Use `globs:` to cover all code, config, and docs related to LLM settings and architecture.
+- Test all new model configurations in a dev/staging environment before deploying to production.
+- Maintain a history of model changes and rationales for easy rollback or audit.
 
 ---
 
-### Compatible Backends
-
-- **Local**: Ollama, LM Studio, containerized model APIs
-- **Remote**: OpenAI, Anthropic, Groq, Together.ai
-- **Embeddings**: ChromaDB (default), Weaviate, Qdrant, pgvector
-
-Agents must remain backend-agnostic, but model-specific. Any backend substitution must be approved by `system-architect` and tracked by `repo-management`.
-
----
-
-### Policy Enforcement
-
-- Governed by `global-governance.mdc`
-- Agents violating model control policy will be paused by `agent-orchestrator`
-- All changes must be reflected in `session_notes.md` and optionally in `CHANGELOG.md`
+If model config, settings, or dependencies are missing or incompatible, block further agent or human action and raise a descriptive error for user remediation.

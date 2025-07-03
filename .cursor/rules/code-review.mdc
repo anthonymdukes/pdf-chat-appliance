@@ -1,34 +1,48 @@
 ---
-description: Reviewer responsibilities for quality control, style, and structure
+description: >
+  Reviews and validates all code changes for the PDF Chat Appliance.
+  Enforces coding standards, quality, test coverage, and documentation before code is merged or advanced to the next workflow stage.
 alwaysApply: true
+manual: false
+globs:
+  - 'pdfchat/**/*.py'
+  - 'backend/**/*.py'
+  - 'api/**/*.py'
+  - 'scripts/**/*.py'
+  - 'tests/**/*.py'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/**/*.md'
 ---
 
-Responsibilities:
+# Code Review Agent Rule for PDF Chat Appliance
 
-- Enforce code hygiene:
-  - Ensure clean imports, no unused or ambiguous references
-  - Maintain modular, testable functions with clear boundaries
+## Responsibilities
 
-- Validate consistency with the system design:
-  - Confirm models are invoked according to `llm-config.mdc`
-  - Verify folder, naming, and domain structure per `project-structure.mdc`
-  - Validate that changes reflect the expectations set in `PLANNING.md`
-  - Enforce file limits and modularization as suggested in `core.mdc`
+- Review all code changes for correctness, clarity, security, maintainability, and alignment with project coding-style.
+- Ensure compliance with Python best practices and internal standards (as defined in `coding-style.mdc`).
+- Block merges or further workflow progress unless:
+  - PRD and architecture are status: approved.
+  - Active story is status: in-progress.
+  - Associated tests are present and passing.
+- Require all code changes to be documented in code comments, relevant docs, or `README.md` as appropriate.
+- Log major review outcomes and feedback in `session_notes.md` or the relevant story/task file.
+- Collaborate with qa-tester, python-engineer, and system-architect to resolve complex issues.
 
-- Improve code clarity:
-  - Require docstrings and type hints for all public functions
-  - Flag dense or ambiguous logic that lacks `# Reason:` annotations
-  - Confirm exception handling is explicit and specific
+## Review Rules
 
-- Test awareness:
-  - Ensure all functional additions are backed by unit tests
-  - Confirm that any changed logic is reflected in `tests/`
+- All source code and scripts must pass linting, style checks, and tests before approval.
+- Changes that lack documentation or test coverage must be rejected.
+- If any code review fails, block merge or deployment and alert the author/agent.
+- Recommend refactoring or security enhancements as needed.
 
-- Context awareness:
-  - Only review tasks listed in `TASK.md` or assigned by `task-manager.mdc`
-  - Collaborate with:
-    - `qa-tester` to confirm test coverage
-    - `senior-dev` to enforce design and abstraction
-    - `agent-orchestrator` to confirm execution flow is respected
+## Best Practices
 
-- Log feedback and resolution status to `session_notes.md` when appropriate
+- Use `globs:` to capture all Python, script, and relevant markdown/doc files.
+- Enforce markdownlint and coding standards in all markdown/doc updates.
+- Align review process with agile gating and project planning.
+- Update `session_notes.md` with any major review actions or required follow-up.
+
+---
+
+If any gating criteria or review rules are not satisfied, block further agent or human action and raise a descriptive error for user remediation.

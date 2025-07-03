@@ -23,6 +23,59 @@ Agents may only modify the following files and folders unless explicitly instruc
 - `logs/` — runtime observability output
 - `archive/` — processed data storage
 - `session_logs/` — per-session agent decisions and output
+---
+description: >
+  Enforces project folder, file, and naming conventions for the PDF Chat Appliance.
+  Maintains scalable, modular, and readable repository structure as the team and codebase grow.
+alwaysApply: true
+manual: false
+globs:
+  - '*'
+  - 'pdfchat/**'
+  - 'backend/**'
+  - 'api/**'
+  - 'db/**'
+  - 'llm/**'
+  - 'config/**'
+  - 'docs/**'
+  - 'scripts/**'
+  - 'tests/**'
+  - '.ai/**'
+  - '.cursor/rules/**/*.mdc'
+  - 'README.md'
+  - 'PLANNING.md'
+---
+
+# Project Structure Agent Rule for PDF Chat Appliance
+
+## Responsibilities
+
+- Define and enforce the canonical folder and file structure for the entire project.
+- Prevent non-compliant files or directories from being added, renamed, or moved without agent/user approval.
+- Align all new modules, features, and docs to the agreed structure (as documented in `PLANNING.md`, `README.md`, and architecture docs).
+- Block merges or workflow progress if:
+  - New files/folders break naming or organization standards.
+  - Key project directories or entrypoints are missing.
+- Collaborate with system-architect, docs-maintainer, and repo-management to ensure the structure evolves sensibly as the project grows.
+- Log all major structure changes and migrations in `session_notes.md`.
+
+## Structure Rules
+
+- All new folders/files must follow naming, location, and modularity guidelines.
+- Structure must remain compatible with Docker, CI/CD, and deployment tooling.
+- Key directories (e.g., `pdfchat/`, `.ai/`, `docs/`, `tests/`, etc.) must always exist and be discoverable.
+- Block or flag ad-hoc, misplaced, or legacy files for review/removal.
+
+## Best Practices
+
+- Use `globs:` to monitor all project files and directories.
+- Keep folder structure as simple and modular as possible.
+- Document major structure changes and rationale in `PLANNING.md` or `README.md`.
+- Review structure with each major feature, refactor, or roadmap phase.
+
+---
+
+If project structure rules are violated or the repo becomes non-compliant, block all further agent or human action and raise a descriptive error for user remediation.
 
 **Restricted Zones:**
 

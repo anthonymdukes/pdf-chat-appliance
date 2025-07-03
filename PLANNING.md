@@ -58,6 +58,75 @@ All execution is governed in AUTO mode. Agents reference `llm-config.mdc`, `proj
 
 ---
 
+## 🧩 Agile Workflow & Agent System
+
+All work in this project is gated by status fields and `.mdc` agent rules for safety, compliance, and quality:
+
+- **No code, docs, or data change is permitted unless:**
+  - PRD and Architecture are `status: approved`
+  - Epic and Story are in the correct status (`current`, `in-progress`)
+  - Agent and workflow gating is satisfied (see `workflow-pdfchat.mdc`)
+- The agent system (see [RULES_INDEX.md](RULES_INDEX.md)) automates:
+  - Code review, testing, deployment, logging, and security checks
+  - Task assignment and tracking
+  - Docs and onboarding
+  - Compliance, escalation, and audit logging
+
+### Agent Onboarding/Contribution
+
+- New agents or rules must be:
+  - Proposed by `system-architect`
+  - Created by `rule-governor`
+  - Logged in `TASK.md` by `task-manager`
+  - Indexed in [RULES_INDEX.md](RULES_INDEX.md)
+- New human contributors should read [README.md](README.md) for setup and agent execution details.
+
+### Architecture & Agent Data Flow (Mermaid)
+
+```mermaid
+flowchart TD
+  subgraph AGENTS [AI Agents & Rules]
+    S[system-architect]
+    F[agent-flow]
+    O[agent-orchestrator]
+    D[docs-maintainer]
+    A[api-builder]
+    R[code-review]
+    Q[qa-tester]
+    E[environment]
+    L[llm-config]
+    P[prompt-strategy]
+    V[observability]
+    M[deployment-monitor]
+    DB[db-specialist]
+    PS[project-structure]
+    T[task-manager]
+    G[global-governance]
+    RC[repo-management]
+    SEC[security-checks]
+    SENIOR[senior-dev]
+  end
+
+  subgraph SERVICES [Services]
+    WebUI[Open WebUI]
+    API[Backend API]
+    OLL[Ollama LLM]
+    QDR[Qdrant DB]
+    DOCS[docs/]
+  end
+
+  S --> F
+  F --> O
+  O --> A & R & Q & D & DB & M & E & V & P & PS & L & G & RC & SEC & SENIOR & T
+  A --> API
+  API --> QDR & OLL
+  WebUI --> API
+  Q --> API
+  D --> DOCS
+```
+
+---
+
 ## 🚀 Future Roadmap
 
 ### Phase 1: Core Stability (v1.1.0) ✅ COMPLETED

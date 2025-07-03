@@ -1,75 +1,48 @@
 ---
-description: Monitors container health and coordinates autonomous redeploys on failure
+description: >
+  Monitors the deployment status, health, and lifecycle of all core services in the PDF Chat Appliance.
+  Automates health checks, restarts, and escalations to ensure high availability, production reliability, and seamless recovery.
 alwaysApply: true
+manual: false
 globs:
-  - 'docker-compose.yml'
-  - 'logs/deployment-loop/**/*.md'
+  - 'scripts/*.ps1'
+  - 'scripts/*.sh'
+  - 'docker-compose.*'
+  - 'deployment/**'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/deployment.md'
+  - 'README.md'
 ---
 
-Responsibilities:
+# Deployment Monitor Agent Rule for PDF Chat Appliance
 
-- Monitor Docker containers for failure states:
-  - Restart loops
-  - Crashed or Exited containers
-  - Healthcheck status = "unhealthy"
-  - Non-responsive or missing completion markers from dependent services
+## Responsibilities
 
-- If any service fails to start or becomes unstable:
-  1. Log details to `logs/deployment-loop/errors.md`
-  2. Attempt up to 2 recovery retries:
-     - Stop all containers
-     - Run `agent-run.ps1 -Action Reset-Env`
-     - Restart stack via `docker-compose up -d --build`
-  3. Track and store:
-     - Deployment duration
-     - Service startup time
-     - Stability/health outcome
-     - Command exit codes and logs
+- Monitor the health and status of all project services (API, backend, Qdrant, Ollama, WebUI, Docker, Nginx, etc.).
+- Perform regular health checks, restart failed services, and log all incidents in `session_notes.md` and `logs/`.
+- Block workflow progress or agent execution if any core service is offline, misconfigured, or in a degraded state.
+- Automate self-healing actions (restart, cleanup, redeploy) when possible; escalate persistent or critical failures to the user immediately.
+- Document all deployment/monitoring actions and major events in `docs/deployment.md`.
+- Collaborate with observability, system-architect, and environment agents to maintain reliability.
+- Block deployment changes unless:
+  - PRD and architecture are status: approved.
+  - Active story is status: in-progress.
+- Recommend fresh context or full system reset after major upgrades or persistent incidents.
 
-- Escalate to:
-  - `system-architect` if 3 recovery cycles fail
-  - `repo-management` if docker-compose structure needs review
-  - `observability` to update structured logs and performance metrics
+## Monitoring Rules
 
-- Collaborate with:
-  - `agent-orchestrator` to gate flow until services are healthy
-  - `task-manager` to record failed recovery cycles and annotate impact
-  - `environment` to confirm `.venv` activation and dependencies installed
+- All service status must be green before code merges, deployments, or further agent action.
+- Persist all incident and remediation logs in project logs and session notes.
+- Alert user and block progress if auto-recovery fails.
 
-Rules:
+## Best Practices
 
-  - when: script executes but terminal returns no stdout or hangs longer than 30 seconds
-    then:
-      - log timeout in `logs/deployment-loop/errors.md`
-      - retry once with `-Wait` or `-NoNewWindow` flags if PowerShell
-      - enforce that output includes one of:
-        - `Health check completed`
-        - `All services healthy`
-        - `Deployment successful`
-        - `TEST_COMPLETE`
-      - if no match, defer control to `agent-orchestrator` for retry queue
+- Use `globs:` to monitor scripts, deployment configs, and monitoring docs.
+- Integrate with observability and logging systems for full-stack visibility.
+- Enforce markdownlint, coding-style, and project formatting standards in all logs/docs.
+- Maintain up-to-date deployment and recovery procedures in documentation.
 
-  - when: `ollama` or `qdrant` container returns `"health": "unhealthy"`
-    then:
-      - run `.\scripts\agent-run.ps1 -Action Reset-Env`
-      - rerun health check script
-      - confirm output includes: `ollama OK`, `qdrant OK`, or similar completion tokens
+---
 
-  - when: recovery retries exceed 3
-    then:
-      - notify `system-architect`
-      - append full error context and last known log to `logs/deployment-loop/errors.md`
-      - mark `deployment-validation` as failed
-      - instruct `agent-orchestrator` to suspend downstream task progression
-
-  - when: log folders `logs/deployment-loop` or `logs/perf` are missing
-    then:
-      - create both directories automatically
-      - validate write access
-      - log to `logs/deployment-loop/env-bootstrap.md`
-
-  - when: all containers appear healthy but health check script still stalls
-    then:
-      - retry script execution with explicit timeout
-      - scan for missing stdout markers
-      - escalate to `environment` and `agent-orchestrator` if unresolved
+If any core service is unhealthy, auto-recovery fails, or monitoring rules are not satisfied, block all further agent or human action and raise a descriptive error for user remediation.

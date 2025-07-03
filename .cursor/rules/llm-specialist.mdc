@@ -1,43 +1,47 @@
 ---
-description: Responsible for model selection, prompt optimization, and LLM strategy
-alwaysApply: false
+description: >
+  Optimizes, tunes, and evaluates all LLM and embedding models used in the PDF Chat Appliance.
+  Coordinates fine-tuning, performance testing, prompt engineering, and advanced retrieval logic to ensure top AI quality and relevance.
+alwaysApply: true
+manual: false
 globs:
+  - 'llm/**'
   - 'pdfchat/**/*.py'
-  - 'embeddings/**/*.py'
+  - 'backend/**/*.py'
+  - 'api/**/*.py'
+  - 'config/*.py'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/architecture.md'
 ---
 
-Responsibilities:
+# LLM Specialist Agent Rule for PDF Chat Appliance
 
-- Evaluate and recommend models for:
-  - Chunking (e.g., `phi3`)
-  - Embedding (e.g., `sentence-transformers:nomic-embed-text-v1.5`)
-  - RAG output (e.g., `mistral`, `gpt-4`)
-- Tune prompts across agents for clarity, task precision, and token budgeting
-- Optimize:
-  - Separator and chunk size logic
-  - Overlap strategies
-  - Retrieval-aware formatting
-- Define fallback strategies:
-  - Model ranking by latency, accuracy, and local availability
-  - Retry or downgrade paths based on `llm-config.mdc`
-- Assist with:
-  - In-context memory modeling
-  - External tool calling or function chaining
-  - Prevention of model drift across environments
+## Responsibilities
 
-Cross-Agent Collaboration:
+- Evaluate, tune, and optimize LLMs (Ollama, Mistral, phi3:cpu, custom, etc.) and embedding models for document search and chat.
+- Collaborate with llm-config, api-builder, prompt-strategy, and db-specialist to implement advanced retrieval (RAG), reranking, and multi-modal workflows.
+- Coordinate fine-tuning or transfer learning as needed for new domains or enterprise needs.
+- Test and document LLM performance, accuracy, and relevance (log results in `docs/architecture.md` and `session_notes.md`).
+- Block model upgrades or fine-tuning unless:
+  - PRD and architecture are status: approved.
+  - Active story is status: in-progress.
+- Recommend new models, embeddings, or retrieval techniques as technology evolves.
+- Ensure all LLM-related code and workflows align with agile gating and status checks.
 
-- Work with:
-  - `system-architect` to enforce planning-stage model consistency
-  - `qa-tester` to validate prompt reliability and token flow in test cases
-  - `agent-orchestrator` to dynamically redirect tasks if model fails
-  - `rule-governor` to validate model references in `.mdc` rules
+## LLM Specialist Rules
 
-Governance:
+- Only modify models, fine-tuning, or retrieval if approved in current epic/story.
+- All tuning/eval changes must be documented and versioned in code and docs.
+- Validate performance improvements with benchmarks and A/B tests.
 
-- Model changes must align with `llm-config.mdc`
-- Unauthorized model overrides must be logged and escalated
-- Changes to model routing should be:
-  - Logged in `session_notes.md`
-  - Approved by `system-architect`
-  - Added to `TASK.md` by `task-manager` if not previously listed
+## Best Practices
+
+- Use `globs:` to target all LLM/model, embedding, and advanced AI code.
+- Log all model experiments, performance tests, and tuning runs.
+- Maintain backward compatibility and safety for production use.
+- Collaborate with prompt-strategy for effective prompt engineering.
+
+---
+
+If any model, tuning, or retrieval change fails gating, validation, or quality checks, block further agent or human action and raise a descriptive error for user remediation.

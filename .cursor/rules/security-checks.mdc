@@ -1,56 +1,52 @@
 ---
-description: Scans for secrets, unsafe file access, and insecure system patterns
-alwaysApply: false
+description: >
+  Owns all security, privacy, and compliance validation for the PDF Chat Appliance.
+  Enforces static/dynamic analysis, secrets detection, dependency and permission checks, and blocks unsafe or non-compliant changes.
+alwaysApply: true
+manual: false
 globs:
-  - 'uploads/**/*.py'
-  - '*.env'
-  - '*.secrets'
+  - 'pdfchat/**/*.py'
+  - 'backend/**/*.py'
+  - 'api/**/*.py'
+  - 'db/**/*.py'
+  - 'llm/**/*.py'
+  - 'config/**'
+  - 'scripts/**/*.py'
+  - 'tests/**/*.py'
+  - '.env*'
+  - 'docker-compose.*'
+  - 'Makefile'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/architecture.md'
+  - 'docs/deployment.md'
 ---
 
-Responsibilities:
+# Security Checks Agent Rule for PDF Chat Appliance
 
-- Scan the codebase for unsafe file operations:
-  - `open()` calls lacking sanitization or proper context managers
-  - Writes to unvalidated paths or unrestricted filenames
-  - Uploads without MIME type filtering or extension whitelisting
+## Responsibilities
 
-- Check `.env` and `.secrets` files for:
-  - Untracked `.gitignore` coverage
-  - Hardcoded API keys, tokens, passwords
-  - Use of plaintext credentials
+- Perform static and dynamic analysis on all code, configs, and deployments.
+- Scan for secrets, credentials, keys, and sensitive info in code, configs, and docs.
+- Check dependencies for vulnerabilities, outdated packages, and unsafe licenses.
+- Enforce secure permissions, container settings, and production deployment policies.
+- Block workflow or agent action if any high/critical vulnerability, leak, or unsafe config is detected.
+- Log all major security findings, remediations, and compliance milestones in `session_notes.md`.
+- Collaborate with global-governance and repo-management for audit and compliance.
 
-- Validate:
-  - Proper schema enforcement via `pydantic`, FastAPI, or equivalent
-  - File size limits, content-type headers, and user input escaping
-  - CORS settings and auth enforcement for any API routes
+## Security Rules
 
-- Inspect telemetry and logs for potential leakage:
-  - Ensure `observability` agent redacts sensitive fields
-  - Detect accidental capture of user PII or API keys
+- All code, configs, and dependencies must pass security checks before deployment or merge.
+- Block secrets, private keys, or passwords from being committed or pushed.
+- Document remediation steps for any security finding or incident.
 
-Collaboration:
+## Best Practices
 
-- Work with:
-  - `repo-management` to enforce Git ignore and file visibility policies
-  - `qa-tester` to define edge-case and security test coverage
-  - `system-architect` to approve policy-level security frameworks
-  - `core` to enforce baseline safe behavior across all agents
+- Use `globs:` to monitor all relevant source, config, and env files for security risks.
+- Integrate security checks with CI/CD, deployment, and code review workflows.
+- Update security policies, tools, and scans regularly as new risks emerge.
+- Train agents and contributors on secure coding and operational practices.
 
-Policy Enforcement:
+---
 
-- May not rewrite code unless:
-  - Fix is explicitly requested via `TASK.md`
-  - Scope is limited to commented annotation (e.g., `# SECURITY WARNING:`)
-
-- Escalate violations to:
-  - `session_notes.md`
-  - `logs/security/violations.md`
-  - `agent-orchestrator` if violation could impact runtime stability
-
-- Governed by:
-  - `project-structure.mdc` for file edit permissions
-  - `global-governance.mdc` for authority limits
-
-- Suggest remediation strategies:
-  - Encryption, obfuscation, scoped access tokens, server-side validation
-  - Folder-level access policy or execution sandboxing (if applicable)
+If security or privacy checks fail, or if a high-risk issue is found, block all further agent or human action and raise a descriptive error for user remediation.

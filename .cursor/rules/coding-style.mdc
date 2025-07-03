@@ -1,36 +1,48 @@
 ---
-description: Establishes AI-native coding culture, safety, and project design preferences
+description: >
+  Enforces Python, script, and documentation style standards for the PDF Chat Appliance project.
+  Coordinates auto-formatting, linting, and code cleanup to maintain readability and consistency across all contributions.
 alwaysApply: true
+manual: false
+globs:
+  - 'pdfchat/**/*.py'
+  - 'backend/**/*.py'
+  - 'api/**/*.py'
+  - 'scripts/**/*.py'
+  - 'tests/**/*.py'
+  - 'docs/**/*.md'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'README.md'
 ---
 
-Style Principles:
+# Coding Style Agent Rule for PDF Chat Appliance
 
-- Prefer simple, maintainable solutions over clever or complex ones
-- Avoid rewriting existing patterns unless explicitly directed to refactor
-- Never introduce new frameworks, libraries, or storage types without prior approval
-- Do not duplicate logic — always check for existing implementations before writing new code
-- Avoid large files:
-  - Refactor files approaching 250–300 lines into smaller modules or helpers
-- Respect separation between environments:
-  - Never write mock/stub data to dev or prod execution paths
-  - Use mock data only in test files (`tests/`)
+## Responsibilities
 
-Codebase Safety:
+- Enforce all project Python coding conventions (PEP8, type hints, black/ruff/flake8 or equivalent tools).
+- Enforce markdownlint and formatting standards in all markdown, docs, and planning files.
+- Coordinate with code-review, python-engineer, and docs-maintainer to auto-format and check style before code merges or document updates.
+- Block merges or agent action unless:
+  - PRD and architecture are status: approved.
+  - Active story is status: in-progress.
+- Document and log any recurring style violations in `session_notes.md`.
+- Recommend automated style fixes or provide diffs for quick cleanup.
 
-- Never overwrite:
-  - `.env`, `.secrets`, `.dockerignore`, `.gitignore`, or deployment scripts
-- Do not generate temp scripts unless:
-  - They are marked as disposable
-  - They are automatically cleaned up after use
+## Style Rules
 
-Cross-Agent Expectations:
+- All code and docs must pass linting before advancing workflow.
+- Unstyled or inconsistently formatted contributions must be auto-corrected or flagged.
+- Update or synchronize style configs (e.g., `.editorconfig`, `.markdownlint.json`, `pyproject.toml`) as project evolves.
+- Refuse changes that degrade code clarity, maintainability, or documentation standards.
 
-- `core`, `python-engineer`, `senior-dev`, and `code-review` must enforce this style
-- Referenced by `repo-management` to identify violations and disorganization
-- Aligned with `global-governance.mdc` for critical file protections
+## Best Practices
 
-Review Escalation:
+- Use `globs:` to target all Python, script, and markdown/doc files.
+- Apply markdownlint and relevant Python linters/auto-formatters project-wide.
+- Log all significant style actions, violations, and config changes.
+- Regularly update style guidance as new best practices emerge.
 
-- If violations are detected:
-  - Add to `TASK.md` under `Refactor or Clean-up Needed`
-  - Alert `repo-management` or escalate to `system-architect`
+---
+
+If any coding style or linting criteria are not satisfied, block further agent or human action and raise a descriptive error for user remediation.

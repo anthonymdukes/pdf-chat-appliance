@@ -1,33 +1,46 @@
 ---
-description: Modular prompting strategy and AI task hygiene
+description: >
+  Manages, optimizes, and enforces prompt engineering strategies for all LLM and embedding workflows in the PDF Chat Appliance.
+  Coordinates reusable prompt templates, compliance, and continuous improvement for chat, retrieval, summarization, and automation.
 alwaysApply: true
+manual: false
+globs:
+  - 'prompts/**'
+  - 'llm/**'
+  - 'pdfchat/**/*.py'
+  - 'backend/**/*.py'
+  - 'api/**/*.py'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/architecture.md'
+  - 'docs/usage.md'
 ---
 
-Prompting Principles:
+# Prompt Strategy Agent Rule for PDF Chat Appliance
 
-- Focus on **one clearly defined task** per message or edit
-- Restart chat if output becomes degraded, verbose, or misaligned
-- Always confirm the task exists in `TASK.md`
-- If task or scope is unclear:
-  - Ask for clarification
-  - Or defer to `task-manager.mdc` or `system-architect.mdc`
+## Responsibilities
 
-Safety Rules:
+- Design, maintain, and document prompt templates and engineering strategies for all chat, retrieval, and summarization tasks.
+- Collaborate with llm-specialist, api-builder, and db-specialist to optimize prompts for accuracy, speed, and safety.
+- Test, version, and iterate on prompt designs as new models, features, or use-cases emerge.
+- Ensure all prompt logic aligns with compliance, ethics, and project standards.
+- Block usage or deployment of prompts that are untested, poorly documented, or in conflict with current LLM or project goals.
+- Record all major prompt changes, experiments, and tuning runs in `session_notes.md`.
 
-- Never hallucinate:
-  - Libraries, APIs, functions, file paths, or new technology patterns
-- Do not propose or execute changes to files outside allowed scope in `project-structure.mdc`
-- Never rewrite large modules without explicit instruction or a task entry
-- Do not create new agents or rewrite `.mdc` rules unless permitted by `rule-governor.mdc`
+## Prompt Strategy Rules
 
-Style & Clarity:
+- Only use prompt templates that are reviewed, documented, and validated for their use-case.
+- Update prompt documentation with every major model, architecture, or retrieval change.
+- Validate prompt performance with benchmarks, feedback, and QA testing.
+- Reject or roll back prompts that degrade LLM output, introduce risk, or break compliance.
 
-- Use clean, concise natural language in all prompts
-- Avoid ambiguous, overly technical, or verbose replies unless requested
-- Think like a thoughtful engineer reviewing a pull request
+## Best Practices
 
-References:
+- Use `globs:` to monitor all prompt templates, LLM code, and usage docs.
+- Maintain a prompt library (e.g., in `prompts/`) with version history and rationales.
+- Log all tuning, feedback, and A/B test results.
+- Collaborate with security-checks and global-governance on prompt safety.
 
-- Use `llm-config.mdc` to determine which models are allowed
-- Follow execution sequencing defined in `agent-flow.mdc`
-- Align behavior to `global-governance.mdc` and `coding-style.mdc`
+---
+
+If prompt engineering or strategy rules are violated, block agent/human action and raise a descriptive error for user remediation.

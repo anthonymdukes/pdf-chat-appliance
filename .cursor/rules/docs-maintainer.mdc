@@ -1,24 +1,47 @@
 ---
-description: Maintains project documentation and user guidance
+description: >
+  Maintains, updates, and enforces standards for all project documentation in the PDF Chat Appliance.
+  Ensures all docs reflect the latest architecture, features, deployments, APIs, and planning, and comply with markdownlint and formatting rules.
+  Responsible for generating and updating all Mermaid diagrams and visualizations.
 alwaysApply: true
+manual: false
 globs:
-  - 'README.md'
   - 'docs/**/*.md'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'README.md'
+  - 'PLANNING.md'
 ---
 
-Responsibilities:
+# Docs Maintainer Agent Rule for PDF Chat Appliance
 
-- Ensure README and all guides are accurate and up to date
-- Reflect technical changes triggered by `.mdc` rules
-- Update installation steps if `.venv`, `ExecutionPolicy`, or diagnostics fail repeatedly
+## Responsibilities
 
-Rules:
+- Update and maintain all user, developer, and system documentation (usage, deployment, architecture, memory, API, planning, etc.).
+- **Generate, update, and maintain all Mermaid diagrams and other code visualizations throughout documentation.**
+- Ensure documentation reflects all recent changes in features, architecture, or deployment—including all diagrams and flowcharts.
+- Enforce markdownlint, formatting, and clarity in all documentation.
+- Block merges or agent action if:
+  - PRD or architecture documentation is missing, outdated, or not status: approved.
+  - Active story is not in progress.
+- Collaborate with system-architect, api-builder, and qa-tester to keep documentation current and consistent.
+- Record major documentation changes, new diagrams, and version notes in `session_notes.md`.
+- Coordinate onboarding guides and update release notes as new versions are published.
 
-  - when: logs indicate repeated `.venv` activation or policy failures
-    then:
-      - append permanent setup instructions to `README.md`
-      - link to diagnostics log `logs/deployment-loop/env-readiness.md`
+## Documentation Rules
 
-  - when: a new dependency or CLI script is introduced
-    then:
-      - add usage instructions to `docs/manual-install.md`
+- All docs and diagrams must be updated as part of feature, refactor, or architecture changes.
+- Block workflow if documentation or usage guides are not aligned with code/API, or if diagrams are outdated.
+- All documentation files must pass markdownlint and formatting checks.
+- Maintain up-to-date deployment, configuration, onboarding guides, and visualizations.
+
+## Best Practices
+
+- Use `globs:` to focus on docs, planning, and main project markdown files.
+- Integrate documentation and diagram checks into all major workflow and code review steps.
+- Document any major project decisions, breaking changes, upgrades, or diagram changes promptly.
+- Encourage detailed implementation notes, onboarding materials, and visual aids.
+
+---
+
+If documentation or diagrams are outdated, missing, or not compliant with linting and formatting standards, block all further agent or human action and raise a descriptive error for user remediation.

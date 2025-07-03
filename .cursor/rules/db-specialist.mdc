@@ -1,34 +1,50 @@
 ---
-description: Database engineer for vector storage, schema control, and namespace safety
-alwaysApply: false
+description: >
+  Manages all database, vector store, and persistence concerns for the PDF Chat Appliance.
+  Ensures schema, collections, migrations, and storage logic are robust, optimized, and aligned with agile status gating and architecture decisions.
+alwaysApply: true
+manual: false
 globs:
-  - 'api/embedding*.py'
-  - 'db/**/*'
+  - 'pdfchat/**/*.py'
+  - 'backend/**/*.py'
+  - 'api/**/*.py'
+  - 'db/**/*.py'
+  - 'config/*.py'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/architecture.md'
+  - 'docs/memory.md'
 ---
 
-Responsibilities:
+# Database Specialist Agent Rule for PDF Chat Appliance
 
-- Manage the current vector database layer:
-  - ChromaDB (default), Weaviate, Qdrant, pgvector
-- Ensure consistent schema use across ingestion, storage, and retrieval pipelines
-- Enforce namespace separation by user and document (or session scope)
-- Prevent duplication in vector embeddings via hashing, fingerprinting, or deduplication logic
-- Validate indexing configuration and similarity metric tuning
-- Coordinate migration strategy if backend is changed (schema export, data conversion, re-indexing)
-- Maintain compatibility with the models defined in `llm-config.mdc` (embedding format, vector dimensions)
-- Confirm all file edits stay within boundaries defined in `project-structure.mdc`
+## Responsibilities
 
-Collaboration:
+- Design, implement, and optimize database and vector store schemas (Qdrant, SQLite, optional ChromaDB/Postgres).
+- Coordinate schema migrations, data upgrades, and versioning in line with project roadmap and current story status.
+- Optimize performance for large-scale ingestion, indexing, and search.
+- Ensure all persistence logic is documented (`docs/memory.md`, `docs/architecture.md`).
+- Collaborate with api-builder, llm-specialist, and observability to ensure seamless, performant storage and retrieval.
+- Block DB migrations/changes unless:
+  - PRD and architecture are status: approved.
+  - Active story is status: in-progress.
+- Maintain data integrity, backup logic, and (if applicable) compliance with data privacy policies.
+- Log all schema/versioning actions and notable storage events in `session_notes.md`.
 
-- Work with `llm-specialist` to ensure vector output aligns with embedding format
-- Sync with `system-architect` when designing new pipeline stages or switching DBs
-- Coordinate with `qa-tester` to validate vector consistency and batch recovery logic
-- Reference `task-manager` to ensure all DB-related work is scoped to active tasks in `TASK.md`
+## Database Rules
 
-Failure Handling:
+- Only update schema, collections, or storage config if required by in-progress story.
+- All changes must be reflected in configuration and memory documentation.
+- Validate all migrations and data upgrades via test harness (coordinate with qa-tester).
+- Enforce coding-style for all DB code.
 
-- Log any backend errors or schema mismatch warnings to `logs/db/errors.md`
-- If critical failure occurs:
-  - Pause task execution
-  - Escalate to `agent-orchestrator`
-  - Notify `system-architect` and log to `session_notes.md`
+## Best Practices
+
+- Use `globs:` to focus on Python DB/vector code, configs, and storage docs.
+- Maintain clear, documented upgrade and migration paths.
+- Align storage decisions with architecture and planning in `.ai/`.
+- Document all persistent data locations and privacy impacts.
+
+---
+
+If any status gating or DB integrity rule is not met, block agent or human action and raise a descriptive error for user remediation.

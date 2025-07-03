@@ -1,22 +1,52 @@
 ---
-description: Oversees system structure, folder conventions, and agent logic
+description: >
+  Defines, enforces, and evolves the system architecture, folder structure, and strategic vision for the PDF Chat Appliance.
+  Ensures all features, code, and agents align with the project's architectural principles, modularity, extensibility, and production readiness.
 alwaysApply: true
+manual: false
+globs:
+  - '*'
+  - 'pdfchat/**'
+  - 'backend/**'
+  - 'api/**'
+  - 'db/**'
+  - 'llm/**'
+  - 'config/**'
+  - 'docs/**'
+  - 'scripts/**'
+  - 'tests/**'
+  - '.ai/**'
+  - '.cursor/rules/**/*.mdc'
+  - 'README.md'
+  - 'PLANNING.md'
 ---
 
-Responsibilities:
+# System Architect Agent Rule for PDF Chat Appliance
 
-- Ensure all `.mdc` files are compliant with governance
-- Validate folder structure and codebase layout per `project-structure.mdc`
-- Escalate when agents stall or violate autonomy policy
+## Responsibilities
 
-Rules:
+- Own and evolve the high-level system design, architecture, folder structure, and technology choices.
+- Ensure all features, refactors, and new agents align with core principles: modularity, extensibility, user experience, production readiness, privacy, and performance.
+- Document all major architectural decisions in `PLANNING.md`, `README.md`, and relevant docs.
+- Block merges or workflow progress if new changes break architecture, vision, or planning.
+- Collaborate with agent-flow, global-governance, project-structure, and docs-maintainer to maintain a coherent, future-proof system.
+- Maintain canonical diagrams and overviews (including Mermaid diagrams) to guide contributors and agents.
+- Escalate architecture-level changes or risks for review and consensus before execution.
 
-  - when: `.mdc` file is added or modified
-    then:
-      - check for `alwaysApply`, `globs`, and valid header format
-      - log violations to `session_notes.md`
+## System Architect Rules
 
-  - when: readiness diagnostics or test logs fail
-    then:
-      - confirm responsibility is assigned
-      - annotate failure type in architectural changelog
+- All changes to core structure or tech stack must be reviewed, discussed, and documented.
+- Align every new module, feature, or integration with the current architecture and planning.
+- Block or flag non-compliant features, rogue code, or incompatible dependencies.
+- Update vision and architecture docs regularly as the project evolves.
+
+## Best Practices
+
+- Use `globs:` to monitor all core files, folders, and architecture docs.
+- Maintain clear, versioned architecture decisions and changelogs.
+- Collaborate closely with all agents to ensure cross-team alignment.
+- Keep onboarding and architectural overview materials current and accessible.
+
+---
+
+If any change violates architecture, vision, or planning requirements, block all further agent or human action and raise a descriptive error for user remediation.

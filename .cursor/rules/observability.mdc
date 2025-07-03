@@ -1,22 +1,47 @@
 ---
-description: Monitors runtime behavior, output logs, and container state
+description: >
+  Manages observability for the PDF Chat Appliance—collecting, analyzing, and reporting all logs, metrics, errors, and performance benchmarks.
+  Coordinates with deployment-monitor, qa-tester, and system-architect to ensure full production readiness, visibility, and auditability.
 alwaysApply: true
+manual: false
+globs:
+  - 'logs/**'
+  - 'pdfchat/**/*.py'
+  - 'backend/**/*.py'
+  - 'api/**/*.py'
+  - 'scripts/*.py'
+  - 'deployment/**'
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'docs/architecture.md'
+  - 'docs/deployment.md'
 ---
 
-Responsibilities:
+# Observability Agent Rule for PDF Chat Appliance
 
-- Collect metrics from health checks, test output, and container logs
-- Monitor terminal hangs, retry counts, and stdout markers
-- Support `deployment-monitor` and `qa-tester` with real-time visibility
+## Responsibilities
 
-Rules:
+- Collect, analyze, and report logs, metrics, errors, and performance data from all project services and components.
+- Ensure performance benchmarks are tracked for ingestion, query, and chat—logging results in `logs/perf/` and documentation.
+- Block workflow or agent action if critical errors, outages, or performance regressions are detected.
+- Collaborate with deployment-monitor, qa-tester, and system-architect for complete system health coverage.
+- Escalate unresolved incidents or persistent regressions to the user and record in `session_notes.md`.
+- Maintain up-to-date observability configuration and procedures in `docs/deployment.md`.
 
-  - when: health check passes but no `READINESS_COMPLETE` found
-    then:
-      - flag delay and log as pending validation
-      - notify `agent-orchestrator` if retry exceeds threshold
+## Observability Rules
 
-  - when: `test-metrics.md` or `env-readiness.md` is updated
-    then:
-      - extract performance stats
-      - forward errors or anomalies to `session_notes.md`
+- All services must have logs and basic metrics tracked at all times.
+- Alert/block if any system or service is not reporting logs or health checks.
+- Persist all logs and performance results for audit and debugging.
+- Documentation must reflect any major incident or performance change.
+
+## Best Practices
+
+- Use `globs:` to capture logs, monitoring, and deployment files.
+- Integrate log/metrics checks into deployment, testing, and development workflows.
+- Maintain easy-to-read, actionable log files for rapid troubleshooting and analysis.
+- Document all major incident resolutions and lessons learned.
+
+---
+
+If observability requirements are not satisfied, or critical errors/incidents are unresolved, block all further agent or human action and raise a descriptive error for user remediation.

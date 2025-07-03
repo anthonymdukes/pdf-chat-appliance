@@ -6,14 +6,14 @@ A production-ready, self-hosted document chat appliance using Open WebUI as the 
 ---
 
 ## ✨ Features
-- **Open WebUI Frontend**: Modern chat interface at `http://localhost:8080`
-- **Multi-Document Support**: PDF, TXT, MD, DOCX, CSV, RTF file processing
-- **Local LLM Processing**: Ollama with Mistral model for chat, nomic-embed-text-v1.5 for embeddings
-- **Vector Database**: Qdrant for high-performance semantic search
-- **Backend API**: RESTful document processing service
-- **Docker Orchestration**: Complete containerized stack
-- **Self-Contained**: Runs entirely on local infrastructure
-- **Multi-Agent Development**: Autonomous AI agents for development and maintenance
+- **Open WebUI Frontend:** Modern chat interface at `http://localhost:8080`
+- **Multi-Document Support:** PDF, TXT, MD, DOCX, CSV, RTF file processing
+- **Local LLM Processing:** Ollama with Mistral model for chat, nomic-embed-text-v1.5 for embeddings
+- **Vector Database:** Qdrant for high-performance semantic search
+- **Backend API:** RESTful document processing service
+- **Docker Orchestration:** Complete containerized stack
+- **Self-Contained:** Runs entirely on local infrastructure
+- **Multi-Agent Development:** Fully autonomous AI agents for development, QA, monitoring, and governance
 
 ---
 
@@ -47,31 +47,63 @@ A production-ready, self-hosted document chat appliance using Open WebUI as the 
 
 ---
 
-## 🛠️ Usage
+## 🧠 Autonomous Agent System
 
-### Open WebUI (Primary Interface)
-- **Access**: `http://localhost:8080`
-- **Features**: Upload documents, chat with content, manage conversations
-- **Supported Formats**: PDF, TXT, MD, DOCX, CSV, RTF
+### Architecture (Mermaid Diagram)
+```mermaid
+flowchart TD
+  subgraph AGENTS [AI Agents & Rules]
+    S[system-architect]
+    F[agent-flow]
+    O[agent-orchestrator]
+    D[docs-maintainer]
+    A[api-builder]
+    R[code-review]
+    Q[qa-tester]
+    E[environment]
+    L[llm-config]
+    P[prompt-strategy]
+    V[observability]
+    M[deployment-monitor]
+    DB[db-specialist]
+    PS[project-structure]
+    T[task-manager]
+    G[global-governance]
+    RC[repo-management]
+    SEC[security-checks]
+    SENIOR[senior-dev]
+  end
 
-### Backend API (For Integration)
-- **Health Check**: `GET http://localhost:5000/health`
-- **Document Upload**: `POST http://localhost:5000/upload`
-- **Document Query**: `POST http://localhost:5000/query`
-- **Get Context**: `POST http://localhost:5000/context`
+  subgraph SERVICES [Services]
+    WebUI[Open WebUI]
+    API[Backend API]
+    OLL[Ollama LLM]
+    QDR[Qdrant DB]
+    DOCS[docs/]
+  end
 
-### CLI Management
-```sh
-# Ingest documents (inside container)
-docker exec pdf-chat-appliance python pdfchat.py ingest documents
-
-# Check container logs
-docker logs pdf-chat-appliance
+  S --> F
+  F --> O
+  O --> A & R & Q & D & DB & M & E & V & P & PS & L & G & RC & SEC & SENIOR & T
+  A --> API
+  API --> QDR & OLL
+  WebUI --> API
+  Q --> API
+  D --> DOCS
 ```
+
+### How it works:
+- **Agents** enforce agile workflow, code quality, docs, infra, and security through `.mdc` rules in `.cursor/rules/`.
+- **Workflow is gated:**  
+  PRD/architecture must be `approved`, only one epic/story is active at a time, agents can't skip or duplicate work.
+- **Execution is fully autonomous:**  
+  No user confirmation needed; agents coordinate, audit, and block unsafe changes using your `settings.json` and `.mdc` rules.
+- **Transparent and extensible:**  
+  See [`RULES_INDEX.md`](RULES_INDEX.md) for a full agent list and responsibilities.
 
 ---
 
-## ⚙️ Architecture
+## ⚙️ System Services
 
 ### Services
 - **Open WebUI** (`localhost:8080`): Primary frontend interface
@@ -87,16 +119,48 @@ docker logs pdf-chat-appliance
 4. Chat queries retrieve relevant context
 5. Ollama (Mistral) generates responses based on document content
 
-### Multi-Agent Development System
-This project uses autonomous AI agents for development:
-- **system-architect**: Manages architecture and design
-- **api-builder**: Implements functionality
-- **code-review**: Enforces quality standards
-- **qa-tester**: Manages testing
-- **observability**: Handles logging and monitoring
-- **docs-maintainer**: Maintains documentation
+---
 
-All agents follow the execution flow defined in `agent-flow.mdc` and use models specified in `llm-config.mdc`.
+## 📝 Usage
+
+### Open WebUI (Primary Interface)
+- **Access:** `http://localhost:8080`
+- **Features:** Upload documents, chat with content, manage conversations
+- **Supported Formats:** PDF, TXT, MD, DOCX, CSV, RTF
+
+### Backend API (For Integration)
+- **Health Check:** `GET http://localhost:5000/health`
+- **Document Upload:** `POST http://localhost:5000/upload`
+- **Document Query:** `POST http://localhost:5000/query`
+- **Get Context:** `POST http://localhost:5000/context`
+
+### CLI Management
+```sh
+# Ingest documents (inside container)
+docker exec pdf-chat-appliance python pdfchat.py ingest documents
+
+# Check container logs
+docker logs pdf-chat-appliance
+```
+
+---
+
+## 🧠 Long-Term Memory & Persistence
+PDF Chat Appliance supports persistent storage of user interactions, conversation history, and document insights across sessions.
+
+- **Backends:**
+  - Default: SQLite (local, file-based)
+  - Extensible: PostgreSQL, ChromaDB, JSONL (future)
+- **Data Stored:**
+  - User sessions, Q&A pairs, document insights, and logs
+- **Location:**
+  - All persistent data is stored in the `/data/` directory (configurable)
+- **Configuration:**
+  - Backend and data path can be set in `config.py` or via CLI
+- **API:**
+  - Unified memory API for CRUD and search operations
+
+See [docs/memory.md](docs/memory.md) for details and developer onboarding.
 
 ---
 
@@ -116,25 +180,6 @@ docker-compose down
 
 ---
 
-## 🧠 Long-Term Memory & Persistence
-PDF Chat Appliance now supports persistent storage of user interactions, conversation history, and document insights across sessions.
-
-- **Backends:**
-  - Default: SQLite (local, file-based)
-  - Extensible: PostgreSQL, ChromaDB, JSONL (future)
-- **Data Stored:**
-  - User sessions, Q&A pairs, document insights, and logs
-- **Location:**
-  - All persistent data is stored in the `/data/` directory (configurable)
-- **Configuration:**
-  - Backend and data path can be set in `config.py` or via CLI
-- **API:**
-  - Unified memory API for CRUD and search operations
-
-See [docs/memory.md](docs/memory.md) for details and developer onboarding.
-
----
-
 ## 📝 Documentation
 - [Usage Guide](docs/usage.md)
 - [Architecture Overview](docs/architecture.md)
@@ -142,6 +187,7 @@ See [docs/memory.md](docs/memory.md) for details and developer onboarding.
 - [Deployment Guide](docs/deployment.md)
 - [Manual Installation Guide](docs/manual-install.md)
 - [Long-Term Memory & Persistence](docs/memory.md)
+- [Agent Rules Index](RULES_INDEX.md)
 
 ---
 
@@ -166,6 +212,8 @@ git clone https://github.com/your-org/pdf-chat-appliance.git
 cd pdf-chat-appliance
 docker-compose up --build
 ```
+
+---
 
 ## 👥 Credits & License
 - Built by the open-source community

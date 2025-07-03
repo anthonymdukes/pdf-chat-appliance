@@ -7,31 +7,31 @@ Agents are activated based on `alwaysApply` status or file `globs:` matches.
 
 ---
 
-| Agent File              | Summary                                        | alwaysApply | globs present |
-|-------------------------|------------------------------------------------|-------------|----------------|
-| `agent-flow.mdc`        | Defines the execution sequence of all agents  | ✅           | ❌             |
-| `agent-orchestrator.mdc`| Detects flow violations, reroutes execution   | ✅           | ❌             |
-| `api-builder.mdc`       | Implements ingestion and chunking APIs        | ✅           | ❌ (implicitly scoped) |
-| `code-review.mdc`       | Checks for code hygiene, style, modularity    | ✅           | ❌             |
-| `coding-style.mdc`      | Global style and formatting guide             | ✅           | ❌             |
-| `core.mdc`              | Foundation for safety, scope, and sanity      | ✅           | ❌             |
-| `db-specialist.mdc`     | Owns vector DB schema and namespace rules     | ❌           | ✅             |
-| `docs-maintainer.mdc`   | Maintains all user/developer markdown         | ✅           | ✅             |
-| `environment.mdc`       | Resets and verifies environment setup scripts | ❌           | ✅             |
-| `global-governance.mdc` | Immutable policy across all agents            | ✅           | ❌             |
-| `llm-config.mdc`        | Maps models to agent roles and tasks          | ✅           | ❌             |
-| `llm-specialist.mdc`    | Tunes prompts, fallbacks, and model behavior  | ❌           | ✅             |
-| `observability.mdc`     | Handles logs, telemetry, trace generation     | ❌           | ✅             |
-| `project-structure.mdc` | Sets file/folder boundaries per agent scope   | ✅           | ❌             |
-| `prompt-strategy.mdc`   | Enforces single-task prompting and precision  | ✅           | ❌             |
-| `python-engineer.mdc`   | Validates Python idioms, typing, and async    | ❌           | ✅             |
-| `qa-tester.mdc`         | Owns Pytest coverage and test verification    | ✅           | ❌             |
-| `repo-management.mdc`   | Manages Git structure, CI, and changelogs     | ❌           | ✅             |
-| `rule-governor.mdc`     | Creates and validates `.mdc` rules            | ✅           | ❌             |
-| `security-checks.mdc`   | Detects secrets, unsafe IO, and auth gaps     | ❌           | ✅             |
-| `senior-dev.mdc`        | Handles architectural refactors and structure | ❌           | ✅             |
-| `system-architect.mdc`  | Owns project design, folder layout, and flow  | ✅           | ❌             |
-| `task-manager.mdc`      | Enforces task boundaries and status logging   | ✅           | ❌             |
+| Agent File                | Summary                                                   | alwaysApply | globs present |
+|---------------------------|-----------------------------------------------------------|:-----------:|:-------------:|
+| `agent-flow.mdc`          | Orchestrates agent execution sequence and handoffs        |     ✅      |      ✅       |
+| `agent-orchestrator.mdc`  | Detects flow violations, drift, and reroutes agents       |     ✅      |      ✅       |
+| `api-builder.mdc`         | Designs and maintains backend/API endpoints               |     ✅      |      ✅       |
+| `code-review.mdc`         | Enforces code quality, reviews, and style                 |     ✅      |      ✅       |
+| `coding-style.mdc`        | Maintains Python and Markdown lint/format standards       |     ✅      |      ✅       |
+| `db-specialist.mdc`       | Owns vector DB and persistent storage design/rules        |     ✅      |      ✅       |
+| `docs-maintainer.mdc`     | Updates and enforces all documentation & diagrams         |     ✅      |      ✅       |
+| `environment.mdc`         | Manages environment, scripts, .venv, dependencies         |     ✅      |      ✅       |
+| `global-governance.mdc`   | Top-level compliance, escalation, and policy governor     |     ✅      |      ✅       |
+| `llm-config.mdc`          | Manages LLM/model configuration and routing               |     ✅      |      ✅       |
+| `llm-specialist.mdc`      | Tunes, evaluates, and optimizes all LLM and embeddings    |     ✅      |      ✅       |
+| `observability.mdc`       | Handles logs, metrics, error/perf monitoring              |     ✅      |      ✅       |
+| `project-structure.mdc`   | Maintains canonical repo folder/file structure            |     ✅      |      ✅       |
+| `prompt-strategy.mdc`     | Governs prompt design, safety, and tuning                 |     ✅      |      ✅       |
+| `python-engineer.mdc`     | Owns core Python code, backend, CLI, and integration      |     ✅      |      ✅       |
+| `qa-tester.mdc`           | Runs and enforces all automated and manual tests          |     ✅      |      ✅       |
+| `repo-management.mdc`     | Handles git/VCS, backup, tagging, CI/CD, audit            |     ✅      |      ✅       |
+| `rule-governor.mdc`       | Validates and coordinates all `.mdc` agent rules          |     ✅      |      ✅       |
+| `security-checks.mdc`     | Performs security, secrets, and compliance validation     |     ✅      |      ✅       |
+| `senior-dev.mdc`          | Leads complex refactors, migrations, technical debt       |     ✅      |      ✅       |
+| `system-architect.mdc`    | Defines architecture, structure, and project vision       |     ✅      |      ✅       |
+| `task-manager.mdc`        | Tracks story/task status and workflow progression         |     ✅      |      ✅       |
+| `workflow-pdfchat.mdc`    | Enforces agile workflow and status gating                 |     ❌      |      ✅       |
 
 ---
 
@@ -46,5 +46,4 @@ Agents are activated based on `alwaysApply` status or file `globs:` matches.
 
 ---
 
-_Last updated: 2025-07-02_
-
+_Last updated: 2025-07-03_

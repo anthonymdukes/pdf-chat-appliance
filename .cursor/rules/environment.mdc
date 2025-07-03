@@ -1,80 +1,50 @@
 ---
-description: Manages environment reset and service initialization scripts
+description: >
+  Manages environment setup, reset, and service initialization for the PDF Chat Appliance.
+  Automates virtualenv activation, dependency installation, and script execution. Prevents accidental data loss and maintains reproducibility.
 alwaysApply: true
+manual: false
 globs:
   - 'scripts/*.ps1'
-  - '*.sh'
+  - 'scripts/*.sh'
+  - 'requirements*.txt'
+  - '.env*'
+  - 'docker-compose.*'
+  - 'Makefile'
+  - 'setup.*'
+  - 'config/*.py'
+  - 'logs/**'
+  - 'uploads/**'
 ---
 
-Responsibilities:
+# Environment Agent Rule for PDF Chat Appliance
 
-- Activate the virtual environment (`.venv\Scripts\Activate.ps1`) before executing Python scripts or installing packages
-- Maintain and version environment management scripts (.ps1, .sh)
-- Validate that each service (e.g., Ollama, Qdrant, ChromaDB) is restarted cleanly
-- Install all required Python packages from `requirements.txt`
-- Prompt for dependency updates or version pinning when startup fails
-- Ensure reset tools and bootstrap flows are documented in README.md
-- Prevent `.env` files from being overwritten without confirmation
-- Avoid deleting persistent volumes or uploads unless explicitly confirmed
-- Suggest simplifications or improvements to the `system-architect`
-- Log all major environment resets or package updates to `session_notes.md`
-- Ensure `.venv` activation is effective in subprocesses
-- Detect and recover from PowerShell script execution prompts or policy blocks
-- Validate Ollama model presence (`/api/tags`) before continuing
-- Ensure logs, uploads, chroma, and qdrant folders are handled gracefully
-- Provide a complete environment diagnostic check prior to deployment cycles
+## Responsibilities
 
-Collaboration:
+- Automate and validate Python environment setup (`.venv`, requirements, config).
+- Ensure activation of the virtual environment before executing scripts or installing packages.
+- Manage environment management scripts (`.ps1`, `.sh`, Makefile, etc.).
+- Validate that all services (Ollama, Qdrant, API) are running and restarted cleanly as needed.
+- Prevent overwriting of `.env` or deletion of persistent data without explicit confirmation.
+- Log all major environment resets, script runs, and package updates in `session_notes.md`.
+- Collaborate with deployment-monitor and system-architect to ensure environment is production-ready.
+- Block agent action if required dependencies are missing, environment is not activated, or startup fails.
+- Suggest improvements or simplifications for environment management as project evolves.
 
-- Work with `repo-management` to track changes to environment scripts
-- Coordinate with `docs-maintainer` to keep setup instructions accurate
-- Respect `project-structure.mdc` to avoid unsafe directory modification
-- Report health or dependency failures to `deployment-monitor`
-- Cooperate with `agent-orchestrator` to confirm command completion and venv status
+## Environment Rules
 
-Rules:
+- Only update or reset environment if PRD and architecture are status: approved and active story is in progress.
+- Always validate `.venv` activation and Python package state before running Python scripts.
+- Detect and recover from PowerShell or shell script errors, policy blocks, or missing permissions.
+- Ensure logs, uploads, and persistent folders are handled correctly during resets or updates.
 
-  - when: Reset-Env or Full-Build is triggered
-    then:
-      - check for `.venv\Scripts\Activate.ps1` and activate if present
-      - verify activation by checking Python `sys.prefix`
-      - if `requirements.txt` exists:
-          - run `pip install -r requirements.txt`
-          - log result to `logs/deployment-loop/env-bootstrap.md`
-      - if Ollama model list is empty:
-          - run `ollama pull phi3`
-          - run `ollama pull mistral`
-      - verify docker-compose services start cleanly and health checks pass
-      - confirm Qdrant is reachable on port 6333
-      - confirm Ollama `/api/tags` returns HTTP 200
-      - if any service fails:
-          - notify `deployment-monitor` and trigger one recovery retry
+## Best Practices
 
-  - when: `agent-run.ps1` or `health-check.ps1` fails to execute
-    then:
-      - check: PowerShell execution policy via `Get-ExecutionPolicy -Scope LocalMachine`
-      - if policy is `Restricted` or `AllSigned`:
-          - suggest user run:
-            `Set-ExecutionPolicy Unrestricted -Scope LocalMachine`
-          - retry with `-ExecutionPolicy Bypass` if unattended
-          - log warning to `logs/deployment-loop/env-bootstrap.md`
-          - mark as recoverable execution environment error
+- Use `globs:` to cover all environment, script, and config files.
+- Maintain clear, documented bootstrap flows and recovery procedures.
+- Never overwrite or delete critical files/folders without user confirmation.
+- Document all environment changes and failures for traceability.
 
-  - when: `.venv` activation appears successful but `python` calls return global env path
-    then:
-      - attempt reactivation and log status
-      - if failure persists, halt deployment and escalate to `system-architect`
+---
 
-  - when: logs/perf or logs/deployment-loop folders do not exist
-    then:
-      - create them automatically
-      - ensure write access is validated before any script execution
-
-  - when: pre-deployment diagnostic validation is requested
-    then:
-      - activate `.venv` and verify via Python sys.prefix
-      - confirm PowerShell execution policy is not `Restricted` or `AllSigned`
-      - run `agent-run.ps1 -Action Run-Tests` and check for `Test execution complete.` in output
-      - ensure required folders exist: `logs/perf`, `logs/deployment-loop`
-      - write validation summary to `logs/deployment-loop/env-readiness.md`
-      - append session checkpoint to `session_notes.md`
+If any environment rule is not satisfied, or if setup fails, block agent and human action and raise a descriptive error for user remediation.

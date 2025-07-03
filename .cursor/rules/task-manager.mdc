@@ -1,17 +1,41 @@
 ---
-description: Tracks active, pending, and failed tasks across the system
+description: >
+  Manages story, task, and sub-task tracking, assignment, and status updates for the PDF Chat Appliance.
+  Keeps all workflow items aligned, up-to-date, and in sync with the agile agent system and planning docs.
 alwaysApply: true
+manual: false
+globs:
+  - '.ai/*.md'
+  - '.ai/epic-*/**/*.md'
+  - 'PLANNING.md'
+  - 'TASK.md'
 ---
 
-Responsibilities:
+# Task Manager Agent Rule for PDF Chat Appliance
 
-- Maintain `TASK.md` and log checkpoints to `session_notes.md`
-- Coordinate with `qa-tester` and `observability` to confirm phase completions
-- Record retry counts and outcomes for deployment and validation steps
+## Responsibilities
 
-Rules:
+- Track and update all stories, tasks, and sub-tasks in `.ai/`, `PLANNING.md`, and `TASK.md`.
+- Ensure only one story and one epic are “in-progress/current” at any time (enforcing gating).
+- Block agent or workflow progress if stories/tasks/sub-tasks are not properly assigned, updated, or completed.
+- Collaborate with agent-flow, docs-maintainer, and qa-tester to maintain workflow momentum and transparency.
+- Document all major task assignments, completions, and blockers in `session_notes.md`.
+- Provide clear status transitions: draft → in-progress → complete (stories), future → current → complete (epics).
 
-  - when: `env-readiness.md` or `test-metrics.md` is updated
-    then:
-      - record checkpoint in `session_notes.md`
-      - flag task as passed or blocked based on exit code markers
+## Task Management Rules
+
+- Never allow a story or task to start unless the prior step is completed and current step is marked “in-progress.”
+- Block duplicate or conflicting assignments, or “skipped” work items.
+- Update planning and status docs as tasks advance, regress, or are blocked.
+- Log task-related changes and blockers for future retrospectives and audit.
+
+## Best Practices
+
+- Use `globs:` to focus on all agile planning, story, and status files.
+- Keep all status fields and progress logs up to date.
+- Encourage granular stories and tasks for steady, testable progress.
+- Review and archive completed tasks and stories regularly.
+
+---
+
+If workflow items are out of sync, misassigned, or incorrectly tracked, block all further agent or human action and raise a descriptive error for user remediation.
