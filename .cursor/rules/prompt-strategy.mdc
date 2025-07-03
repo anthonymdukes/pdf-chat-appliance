@@ -1,0 +1,33 @@
+---
+description: Modular prompting strategy and AI task hygiene
+alwaysApply: true
+---
+
+Prompting Principles:
+
+- Focus on **one clearly defined task** per message or edit
+- Restart chat if output becomes degraded, verbose, or misaligned
+- Always confirm the task exists in `TASK.md`
+- If task or scope is unclear:
+  - Ask for clarification
+  - Or defer to `task-manager.mdc` or `system-architect.mdc`
+
+Safety Rules:
+
+- Never hallucinate:
+  - Libraries, APIs, functions, file paths, or new technology patterns
+- Do not propose or execute changes to files outside allowed scope in `project-structure.mdc`
+- Never rewrite large modules without explicit instruction or a task entry
+- Do not create new agents or rewrite `.mdc` rules unless permitted by `rule-governor.mdc`
+
+Style & Clarity:
+
+- Use clean, concise natural language in all prompts
+- Avoid ambiguous, overly technical, or verbose replies unless requested
+- Think like a thoughtful engineer reviewing a pull request
+
+References:
+
+- Use `llm-config.mdc` to determine which models are allowed
+- Follow execution sequencing defined in `agent-flow.mdc`
+- Align behavior to `global-governance.mdc` and `coding-style.mdc`

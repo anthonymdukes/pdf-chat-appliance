@@ -8,11 +8,12 @@ A production-ready, self-hosted document chat appliance using Open WebUI as the 
 ## ✨ Features
 - **Open WebUI Frontend**: Modern chat interface at `http://localhost:8080`
 - **Multi-Document Support**: PDF, TXT, MD, DOCX, CSV, RTF file processing
-- **Local LLM Processing**: Ollama with Mistral model for embeddings and chat
+- **Local LLM Processing**: Ollama with Mistral model for chat, nomic-embed-text-v1.5 for embeddings
 - **Vector Database**: Qdrant for high-performance semantic search
 - **Backend API**: RESTful document processing service
 - **Docker Orchestration**: Complete containerized stack
 - **Self-Contained**: Runs entirely on local infrastructure
+- **Multi-Agent Development**: Autonomous AI agents for development and maintenance
 
 ---
 
@@ -74,10 +75,21 @@ docker logs pdf-chat-appliance
 
 ### Data Flow
 1. Upload documents via Open WebUI
-2. Backend processes and creates embeddings
+2. Backend processes and creates embeddings using nomic-embed-text-v1.5
 3. Documents stored in Qdrant vector database
 4. Chat queries retrieve relevant context
-5. Ollama generates responses based on document content
+5. Ollama (Mistral) generates responses based on document content
+
+### Multi-Agent Development System
+This project uses autonomous AI agents for development:
+- **system-architect**: Manages architecture and design
+- **api-builder**: Implements functionality
+- **code-review**: Enforces quality standards
+- **qa-tester**: Manages testing
+- **observability**: Handles logging and monitoring
+- **docs-maintainer**: Maintains documentation
+
+All agents follow the execution flow defined in `agent-flow.mdc` and use models specified in `llm-config.mdc`.
 
 ---
 

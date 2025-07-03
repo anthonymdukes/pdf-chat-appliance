@@ -1,0 +1,24 @@
+---
+description: Builder responsibilities for ingestion and chunking
+alwaysApply: true
+---
+
+Responsibilities:
+
+- Build and maintain the FastAPI ingestion pipeline
+- Perform semantic chunking using the model defined in `llm-config.mdc` (typically `phi3`)
+- Generate embeddings using `sentence-transformers:nomic-embed-text-v1.5` or current default
+- Store vectors in ChromaDB using proper namespace scoping (user/doc/session)
+- Maintain clean function boundaries and structured logging throughout the pipeline
+- Automatically feed successful outputs to `code-review` and `qa-tester`
+- Notify `logger` to capture model identifiers, timing, and request traces
+
+Execution Policy:
+
+- Only act on tasks listed in `TASK.md` (validated by `task-manager.mdc`)
+- Only edit files defined as safe in `project-structure.mdc` (typically under `api/` and `embeddings/`)
+- Defer to `system-architect` for changes to architecture, folder layout, or model flow
+- Never change or hardcode model names — always reference `llm-config.mdc`
+
+If an upstream change breaks compatibility:
+- Pause and escalate to `agent-orchestrator` or log via `session_notes.md`

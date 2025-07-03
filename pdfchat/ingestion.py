@@ -9,6 +9,7 @@ for semantic search using llama-index and FAISS.
 import os
 import asyncio
 import hashlib
+import logging
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Optional, Iterator, Dict, Set
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
@@ -16,19 +17,22 @@ from llama_index.core.storage import StorageContext
 from llama_index.core.node_parser import SimpleNodeParser
 from llama_index.core.schema import TextNode
 
+# Setup logger for this module
+logger = logging.getLogger(__name__)
+
 # Try to import optional dependencies, provide stubs if not available
 import os
 # Set environment variable to use local embeddings to avoid OpenAI fallback
 os.environ["LLAMA_INDEX_EMBED_MODEL"] = "local"
 
 try:
-    from llama_index.embeddings.ollama import OllamaEmbedding
+    from llama_index.embeddings.huggingface import HuggingFaceEmbedding
     from llama_index.core import Settings
-    # Use Ollama embeddings since we're running Ollama locally
-    Settings.embed_model = OllamaEmbedding(model_name="mistral")
-    print(f"[DEBUG] Using Ollama embeddings with mistral model", flush=True)
+    # Use nomic-embed-text-v1.5 for embeddings as specified in llm-config.mdc
+    Settings.embed_model = HuggingFaceEmbedding(model_name="nomic-ai/nomic-embed-text-v1.5", trust_remote_code=True)
+    logger.info("Using nomic-embed-text-v1.5 for embeddings as per llm-config.mdc")
 except ImportError:
-    print("[DEBUG] OllamaEmbedding not available, using default embedding")
+    logger.warning("HuggingFaceEmbedding not available, using default embedding")
 
 try:
     from llama_index.vector_stores.qdrant import QdrantVectorStore
@@ -293,7 +297,7 @@ class LargeFileProcessor:
             }
             
         except Exception as e:
-            print(f"[ERROR] Enterprise document processing failed: {e}", flush=True)
+            logger.error(f"Enterprise document processing failed: {e}")
             raise
 
 class PDFIngestion:
@@ -313,7 +317,7 @@ class PDFIngestion:
     def load_documents(self, docs_dir: Optional[str] = None) -> List:
         """Load documents from the specified directory, skipping hidden/system files and validating fields."""
         docs_dir = docs_dir or self.config.docs_dir
-        print(f"[+] Loading PDFs from {docs_dir}...")
+        logger.info(f"Loading PDFs from {docs_dir}...")
         
         if not os.path.exists(docs_dir):
             raise FileNotFoundError(f"Documents directory not found: {docs_dir}")
@@ -322,16 +326,16 @@ class PDFIngestion:
         supported_extensions = ['.pdf', '.txt', '.md', '.docx', '.csv', '.rtf']
         all_files = [f for f in os.listdir(docs_dir) if any(f.lower().endswith(ext) for ext in supported_extensions) and not f.startswith('.')]
         if not all_files:
-            print(f"[!] No supported document files found after filtering hidden/system files. Supported types: {supported_extensions}")
+            logger.warning(f"No supported document files found after filtering hidden/system files. Supported types: {supported_extensions}")
             return []
         
         # Use SimpleDirectoryReader as before
         documents = SimpleDirectoryReader(docs_dir, recursive=True).load_data()
-        print(f"[+] Loaded {len(documents)} documents (raw)")
+        logger.info(f"Loaded {len(documents)} documents (raw)")
         
         # Debug: print type and repr of each loaded document
         for i, doc in enumerate(documents):
-            print(f"[DEBUG] Document {i}: type={type(doc)}, repr={repr(doc)}")
+            logger.debug(f"Document {i}: type={type(doc)}, repr={repr(doc)}")
         
         # Validate and filter documents
         valid_documents = []
@@ -340,27 +344,27 @@ class PDFIngestion:
             text = getattr(doc, 'text', None)
             doc_id = getattr(doc, 'doc_id', None) or getattr(doc, 'id_', None) or getattr(doc, 'id', None)
             if not text or not isinstance(text, str) or not text.strip():
-                print(f"[!] Skipping document {i}: missing or empty text field.")
+                logger.warning(f"Skipping document {i}: missing or empty text field.")
                 continue
             if not doc_id or not isinstance(doc_id, str):
-                print(f"[!] Skipping document {i}: missing or invalid id field.")
+                logger.warning(f"Skipping document {i}: missing or invalid id field.")
                 continue
             # Optionally check for other fields as needed
             valid_documents.append(doc)
-        print(f"[+] {len(valid_documents)} valid documents after validation.")
+        logger.info(f"{len(valid_documents)} valid documents after validation.")
         if len(valid_documents) < len(documents):
-            print(f"[!] Skipped {len(documents) - len(valid_documents)} malformed or empty documents.")
+            logger.warning(f"Skipped {len(documents) - len(valid_documents)} malformed or empty documents.")
         return valid_documents
     
     def create_vector_store_optimized(self, documents: List, progress_callback=None) -> VectorStoreIndex:
         """Create vector store with large file optimizations."""
-        print(f"[+] Converting {len(documents)} files to vector store with optimization...")
+        logger.info(f"Converting {len(documents)} files to vector store with optimization...")
         
         # Setup Qdrant connection
         qdrant_host = "qdrant"
         qdrant_port = 6333
         collection_name = "pdfchat_docs"
-        print(f"[DEBUG] Connecting to Qdrant at {qdrant_host}:{qdrant_port}", flush=True)
+        logger.debug(f"Connecting to Qdrant at {qdrant_host}:{qdrant_port}")
         client = QdrantClient(host=qdrant_host, port=qdrant_port)
         vector_store = QdrantVectorStore(client=client, collection_name=collection_name)
         storage_context = StorageContext.from_defaults(vector_store=vector_store)
@@ -378,7 +382,7 @@ class PDFIngestion:
                 regular_files.append(doc)
         
         if large_files:
-            print(f"[+] Processing {len(large_files)} large files with optimization")
+            logger.info(f"Processing {len(large_files)} large files with optimization")
             if progress_callback:
                 progress_callback(f"Processing {len(large_files)} large files")
             
@@ -406,7 +410,7 @@ class PDFIngestion:
         
         # Process regular files normally
         if regular_files:
-            print(f"[+] Processing {len(regular_files)} regular files normally")
+            logger.info(f"Processing {len(regular_files)} regular files normally")
             for i, doc in enumerate(regular_files):
                 doc_id = getattr(doc, 'doc_id', None) or getattr(doc, 'id_', None) or getattr(doc, 'id', None)
                 text = getattr(doc, 'text', None)
@@ -415,9 +419,9 @@ class PDFIngestion:
                 if isinstance(meta, dict):
                     sanitized_meta = {k: v for k, v in meta.items() if v is not None}
                     doc.metadata = sanitized_meta
-                    print(f"[DEBUG] Document {i}: id={doc_id}, text_len={len(text) if text else 0}, sanitized_metadata={sanitized_meta}")
+                    logger.debug(f"Document {i}: id={doc_id}, text_len={len(text) if text else 0}, sanitized_metadata={sanitized_meta}")
                 else:
-                    print(f"[DEBUG] Document {i}: id={doc_id}, text_len={len(text) if text else 0}, metadata={meta}")
+                    logger.debug(f"Document {i}: id={doc_id}, text_len={len(text) if text else 0}, metadata={meta}")
             
             # Use standard processing for regular files
             if not large_files:  # Only create index if we didn't already create one
@@ -428,7 +432,7 @@ class PDFIngestion:
                 )
         
         index.storage_context.persist()
-        print("[✓] Qdrant vector database updated with optimizations.", flush=True)
+        logger.info("Qdrant vector database updated with optimizations.")
         return index
     
     def create_vector_store(self, documents: List) -> VectorStoreIndex:
@@ -451,6 +455,6 @@ class PDFIngestion:
             storage_context = StorageContext.from_defaults(vector_store=vector_store)
             return VectorStoreIndex.from_vector_store(vector_store, storage_context=storage_context)
         except Exception as e:
-            print(f"[ERROR] Failed to load existing index: {e}", flush=True)
+            logger.error(f"Failed to load existing index: {e}")
             raise Exception(f"Vector store not available: {str(e)}")
  

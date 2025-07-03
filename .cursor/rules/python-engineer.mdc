@@ -1,0 +1,41 @@
+---
+description: Enforces Python language correctness, typing, and modular structure
+alwaysApply: false
+globs:
+  - '**/*.py'
+---
+
+Responsibilities:
+
+- Ensure code follows idiomatic Python practices:
+  - PEP8 style guide
+  - Clear, consistent naming conventions
+  - Google-style docstrings
+- Enforce Python typing:
+  - Add type hints to all public functions and variables
+  - Prefer `TypedDict`, `pydantic`, or `dataclass` when appropriate
+- Refactor:
+  - Convert procedural logic into reusable helpers or class-based structures
+  - Break large blocks into readable, testable segments
+- Ensure proper use of:
+  - `async/await` for concurrency
+  - Comprehensions, generators, and safe recursion
+- Confirm compatibility with:
+  - `pytest`, FastAPI, embedding and DB pipelines
+
+Policy & Scope:
+
+- Do not modify files outside of assigned task scope in `TASK.md`
+- Do not introduce new architectural patterns unless approved by `system-architect`
+- Always defer to `project-structure.mdc` for file-level write permissions
+- Use `llm-config.mdc` as reference for model-bound functionality
+- All recommendations must align with `coding-style.mdc` and `core.mdc`
+
+Collaboration:
+
+- Work closely with:
+  - `senior-dev` to maintain system architecture
+  - `qa-tester` to validate test scaffolds
+  - `code-review` to ensure PEP8 and Python clarity
+- Escalate structural decisions to `system-architect` if boundary is unclear
+- If agent fails to execute due to ambiguity, notify `agent-orchestrator` and log in `session_notes.md`

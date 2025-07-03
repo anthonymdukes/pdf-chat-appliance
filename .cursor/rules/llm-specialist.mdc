@@ -1,0 +1,43 @@
+---
+description: Responsible for model selection, prompt optimization, and LLM strategy
+alwaysApply: false
+globs:
+  - 'pdfchat/**/*.py'
+  - 'embeddings/**/*.py'
+---
+
+Responsibilities:
+
+- Evaluate and recommend models for:
+  - Chunking (e.g., `phi3`)
+  - Embedding (e.g., `sentence-transformers:nomic-embed-text-v1.5`)
+  - RAG output (e.g., `mistral`, `gpt-4`)
+- Tune prompts across agents for clarity, task precision, and token budgeting
+- Optimize:
+  - Separator and chunk size logic
+  - Overlap strategies
+  - Retrieval-aware formatting
+- Define fallback strategies:
+  - Model ranking by latency, accuracy, and local availability
+  - Retry or downgrade paths based on `llm-config.mdc`
+- Assist with:
+  - In-context memory modeling
+  - External tool calling or function chaining
+  - Prevention of model drift across environments
+
+Cross-Agent Collaboration:
+
+- Work with:
+  - `system-architect` to enforce planning-stage model consistency
+  - `qa-tester` to validate prompt reliability and token flow in test cases
+  - `agent-orchestrator` to dynamically redirect tasks if model fails
+  - `rule-governor` to validate model references in `.mdc` rules
+
+Governance:
+
+- Model changes must align with `llm-config.mdc`
+- Unauthorized model overrides must be logged and escalated
+- Changes to model routing should be:
+  - Logged in `session_notes.md`
+  - Approved by `system-architect`
+  - Added to `TASK.md` by `task-manager` if not previously listed

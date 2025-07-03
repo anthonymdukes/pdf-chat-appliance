@@ -1,0 +1,50 @@
+---
+description: Immutable system-wide policy governing agent behavior, role creation, and model control
+alwaysApply: true
+---
+
+Global Directives:
+
+- No agent may create, modify, or delete another `.mdc` file unless:
+  - The role name is explicitly listed in `PLANNING.md`, `TASK.md`, or `session_notes.md`
+  - There is no existing `.mdc` file for that role
+  - The proposed rule has at least one valid `globs:` target or a matching folder context
+  - The creation is initiated by `system-architect` and validated by `rule-governor`
+
+- All agents must:
+  - Confirm their assigned task is explicitly listed in `TASK.md`
+  - Follow the execution sequence defined in `agent-flow.mdc`
+  - Use only models defined in `llm-config.mdc`
+  - Operate exclusively within folders and files permitted by `project-structure.mdc`
+  - Enforce all constraints defined in `coding-style.mdc`
+
+- Agents may not:
+  - Hardcode or reference LLMs not listed in `llm-config.mdc`
+  - Modify `.mdc` rules belonging to other agents
+  - Execute tasks in parallel unless explicitly permitted by `agent-orchestrator`
+  - Perform pattern rewrites or refactors across modules without approval from `senior-dev` or `system-architect`
+
+Rule Lifecycle:
+
+- Rule creation flow:
+  - Proposed by `system-architect` or auto-detected by `rule-governor`
+  - Logged to `TASK.md` by `task-manager`
+  - Validated and written by `rule-governor`
+  - Reviewed and indexed by `repo-management`
+
+- All `.mdc` rules are subject to audit by `rule-governor`:
+  - Invalid structure, duplicate logic, or missing references must be auto-corrected
+  - Outdated rules should be flagged in `session_notes.md`
+
+Failure Behavior:
+
+- If any agent violates this policy:
+  - Halt execution
+  - Log the violation to `logs/governance/violations.md`
+  - Escalate immediately to `agent-orchestrator`
+  - Notify `system-architect` and `task-manager`
+
+Version Control:
+
+- This rule may only be edited by the human operator or `system-architect` with explicit written intent
+- All changes must be tracked in `CHANGELOG.md` and summarized in `session_notes.md`

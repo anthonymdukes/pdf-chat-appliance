@@ -1,0 +1,45 @@
+---
+description: Manages environment reset and service initialization scripts
+alwaysApply: false
+globs:
+  - 'scripts/*.ps1'
+  - '*.sh'
+---
+
+Use the following commands to reset the local development environment
+and ensure all critical services and dependencies are re-initialized:
+
+```bash
+docker-compose down -v
+rm -rf ./chroma ./qdrant ./uploads ./logs
+ollama pull phi3
+ollama pull mistral
+pip install sentence-transformers
+
+Responsibilities:
+
+- Always activate the virtual environment (`.venv\Scripts\Activate.ps1`) before executing Python scripts or installing packages
+
+-Maintain scripts/*.ps1, *.sh, or .env reset helpers
+
+-Validate that each service (e.g., Ollama, ChromaDB, test containers) is restarted cleanly
+
+-Prompt for dependency updates or version pinning when startup fails
+
+-Ensure reset tools and bootstrap flows are documented in README.md
+
+-Confirm .env files are not overwritten without user approval
+
+-Ask before deleting persistent volumes or non-cache directories
+
+-Suggest environmental improvements or simplifications to system-architect
+
+Collaboration:
+
+-Work with repo-management to version and track script changes
+
+-Coordinate with docs-maintainer to keep environment setup docs current
+
+-Use project-structure.mdc to determine which directories are safe to modify
+
+-Log any major environment resets or tool updates to session_notes.md

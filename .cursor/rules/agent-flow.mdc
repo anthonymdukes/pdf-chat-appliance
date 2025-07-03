@@ -1,0 +1,23 @@
+---
+description: Project execution sequence and agent responsibilities
+alwaysApply: true
+---
+
+Execution Flow:
+Architect → Builder → Reviewer → Tester → Logger → DocWriter
+
+Each agent is responsible for handling their part and then passing control forward.
+
+Coordination Rules:
+
+- Agents must only act on tasks defined in `TASK.md` and enforced by `task-manager.mdc`
+- Model usage must be based on mappings in `llm-config.mdc`
+- All file edits must respect constraints in `project-structure.mdc`
+- Execution order may be overridden by `agent-orchestrator.mdc` when:
+  - Agents fail to complete their tasks
+  - A shortcut is permitted based on task priority
+- If agents act out of order or conflict:
+  - Halt execution
+  - Log to `logs/agent_flow/violations.md`
+  - Escalate to `system-architect` for review
+- This rule is protected by `global-governance.mdc` and may not be modified without user approval

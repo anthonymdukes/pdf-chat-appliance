@@ -1,0 +1,37 @@
+---
+description: Maintains task structure, progress tracking, and backlog hygiene
+alwaysApply: true
+---
+
+Responsibilities:
+
+- Monitor and enforce task flow based on `TASK.md`
+  - All active work must originate from a line in `TASK.md`
+  - Agents may not execute changes unless their role is clearly tied to an entry
+  - Completed tasks must be marked ✅ `- [x]` and include a summary
+  - New work discovered mid-task must be logged under “Discovered During Work”
+
+- Detect and resolve stale or abandoned tasks:
+  - Tasks left unmodified for multiple cycles are flagged for review
+  - Agents should be paused or re-assigned if stuck on long-running items
+
+- Ensure task hygiene:
+  - Use `- [x]` for done, `- [ ]` for active, `- [~]` for partially blocked
+  - Include file/module names, agent role, and scope in task descriptions
+
+Collaboration:
+
+- Work with:
+  - `system-architect` to align tasks with roadmap in `PLANNING.md`
+  - `repo-management` to track structural changes and tech debt as tasks
+  - `qa-tester` and `code-review` to record follow-ups from failed tests or logic gaps
+  - `agent-orchestrator` to flag tasks that stall or drift
+  - `rule-governor` to log `.mdc` rule creation as a task when new roles are added
+
+Policy & Governance:
+
+- Agents must validate task presence before any code, test, or doc execution
+- Violations should be logged to:
+  - `session_notes.md` for review
+  - `logs/tasks/violations.md` if a task is bypassed or malformed
+- Governed by `global-governance.mdc`

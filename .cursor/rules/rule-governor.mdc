@@ -1,0 +1,57 @@
+---
+description: Oversees creation, formatting, and validation of `.mdc` agent rules
+alwaysApply: true
+---
+
+Responsibilities:
+
+1. **Validate all `.mdc` files in `.cursor/rules/`** for:
+   - Missing or malformed frontmatter: `---`, `description`, `alwaysApply`
+   - Invalid or overly broad `globs:` assignments
+   - Absence of a `Responsibilities:` section
+   - Duplicated or redundant role logic
+   - Violations of constraints in `global-governance.mdc`
+
+2. **Create `.mdc` rule files** when:
+   - A new agent role appears in `PLANNING.md`, `TASK.md`, or `session_notes.md`
+   - No `.mdc` exists for that role in `.cursor/rules/`
+   - The proposed agent has a file or domain pattern match (`api/`, `pdfchat/`, etc.)
+   - Creation is explicitly permitted by `global-governance.mdc`
+
+3. **Enforce rule structure**:
+   - Every rule must include:
+     - `description:`, `alwaysApply:`, and optional `globs:`
+     - A well-formed `Responsibilities:` section
+   - Use lowercase, hyphenated naming (e.g., `llm-specialist.mdc`)
+   - Auto-correct inconsistent headers and spacing
+
+4. **Cross-Agent Coordination**:
+   - Collaborate with:
+     - `system-architect` to validate architectural alignment
+     - `task-manager` to log rule changes or additions as new tasks
+     - `repo-management` to audit rule usage and update `RULES_INDEX.md`
+     - `agent-orchestrator` to activate rules or pause conflicting agents
+
+5. **Logging & Visibility**:
+   - Log every rule creation or correction to `session_notes.md`
+   - Append rule metadata to `RULES_INDEX.md`
+   - Generate a changelog entry in `CHANGELOG.md` if a critical `.mdc` is added or removed
+
+6. **Safety & Boundaries**:
+   - Do not:
+     - Create a rule that duplicates an existing `.mdc`
+     - Modify `global-governance.mdc` or other protected rules
+   - Do:
+     - Propose promotion of `alwaysApply: true` when agent becomes essential
+     - Recommend narrower `globs:` if agent triggers too frequently
+
+7. **Trigger Conditions**:
+   - New folders or services added to project (e.g., `auth/`, `frontend/`)
+   - `.md`, `.py`, or `.sh` files added without matching agent rule
+   - An agent fails due to unclear scope, missing rule, or permission boundary
+
+Policy:
+
+- Governed by `global-governance.mdc`
+- Must defer to `system-architect` and `task-manager` for major structural changes
+- If unsure about rule validity, escalate to `agent-orchestrator`

@@ -1,0 +1,36 @@
+---
+description: Establishes AI-native coding culture, safety, and project design preferences
+alwaysApply: true
+---
+
+Style Principles:
+
+- Prefer simple, maintainable solutions over clever or complex ones
+- Avoid rewriting existing patterns unless explicitly directed to refactor
+- Never introduce new frameworks, libraries, or storage types without prior approval
+- Do not duplicate logic — always check for existing implementations before writing new code
+- Avoid large files:
+  - Refactor files approaching 250–300 lines into smaller modules or helpers
+- Respect separation between environments:
+  - Never write mock/stub data to dev or prod execution paths
+  - Use mock data only in test files (`tests/`)
+
+Codebase Safety:
+
+- Never overwrite:
+  - `.env`, `.secrets`, `.dockerignore`, `.gitignore`, or deployment scripts
+- Do not generate temp scripts unless:
+  - They are marked as disposable
+  - They are automatically cleaned up after use
+
+Cross-Agent Expectations:
+
+- `core`, `python-engineer`, `senior-dev`, and `code-review` must enforce this style
+- Referenced by `repo-management` to identify violations and disorganization
+- Aligned with `global-governance.mdc` for critical file protections
+
+Review Escalation:
+
+- If violations are detected:
+  - Add to `TASK.md` under `Refactor or Clean-up Needed`
+  - Alert `repo-management` or escalate to `system-architect`

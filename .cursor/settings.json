@@ -1,0 +1,16 @@
+{
+  "agentMode": "auto",
+  "defaultAgent": "cursor-agent",
+  "autonomy": {
+    "confirmCodeEdits": false,
+    "confirmFileCreation": false,
+    "confirmFileDeletion": false,
+    "confirmCommandExecution": false
+  },
+  "logging": {
+    "enabled": true,
+    "level": "info",
+    "logEdits": true,
+    "logCommands": true
+  }
+}

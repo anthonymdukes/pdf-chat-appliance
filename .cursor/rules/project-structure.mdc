@@ -1,0 +1,42 @@
+---
+description: Allowed edit scope for files and directories
+alwaysApply: true
+---
+
+Agents may only modify the following files and folders unless explicitly instructed otherwise.
+
+**Editable Files:**
+
+- `README.md` — main project usage and setup guide
+- `PLANNING.md` — system design and architecture reference
+- `TASK.md` — task queue and tracking
+- `CURSOR_RULES.md` — legacy agent behavior source
+- `SYSTEM_OVERVIEW.md` — architecture diagrams and pipelines
+
+**Editable Folders:**
+
+- `api/` — FastAPI routes and ingestion logic
+- `embeddings/` — vector generation and model interface
+- `docker/` — Dockerfiles and service definitions
+- `uploads/` — raw document input locations
+- `chroma/` — vector DB initialization and schema
+- `logs/` — runtime observability output
+- `archive/` — processed data storage
+- `session_logs/` — per-session agent decisions and output
+
+**Restricted Zones:**
+
+- Do not modify:
+  - `.cursor/` — contains agent rules and system configuration
+  - `.git/`, `.env`, `.secrets`, `.venv/`, or deployment configs
+- Do not generate new folders unless:
+  - Approved in `PLANNING.md`
+  - Added to this file by `system-architect` or `repo-management`
+
+Cross-Agent Policy:
+
+- This rule is enforced by:
+  - `core.mdc` for agent file boundary safety
+  - `agent-orchestrator.mdc` to halt unauthorized edits
+  - `repo-management.mdc` to audit project layout
+- Governed by `global-governance.mdc`

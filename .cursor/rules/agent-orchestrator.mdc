@@ -1,0 +1,56 @@
+---
+description: Oversees multi-agent coordination, sequencing, and execution integrity
+alwaysApply: true
+---
+
+Responsibilities:
+
+- Monitor active agents to ensure correct execution sequence per `agent-flow.mdc`
+- Pause workflow immediately if:
+  - Agents execute out of order
+  - A file is modified outside the scope defined in `project-structure.mdc`
+  - A task is executed that is not listed in `TASK.md`
+
+- Detect execution stalls:
+  - If a CLI command (e.g., `docker ps`, `pytest`, etc.) produces no output for 30 seconds:
+    - Retry once with a 15s timeout buffer
+    - If still stalled, call `environment.mdc` to trigger stack teardown and minimal rebuild
+    - Record error in `logs/deployment-loop/errors.md`
+    - Notify `system-architect` if the stall occurs twice within a cycle
+
+- Handle container restart loops:
+  - Monitor status via `deployment-monitor.mdc` or direct Docker CLI polling
+  - If `Restarting` state detected:
+    - Halt agent execution
+    - Instruct `repo-management` to capture logs
+    - Call `observability.mdc` to inspect container health or restart cause
+    - Optionally remove offending container and rerun agent cycle from scratch
+
+- Reroute or defer task execution to the correct agent if:
+  - A role executes code outside its responsibility
+  - The assigned agent is unavailable or missing
+  - A file’s glob match triggers an unintended agent
+
+- Override role handoffs defined in `agent-flow.mdc` only when:
+  - Agents fail or stall for more than one execution cycle
+  - `rule-governor.mdc` confirms a rule is missing or misconfigured
+  - Emergency recovery is required and logged
+
+- Escalate to `system-architect` when:
+  - A flow conflict occurs repeatedly
+  - Execution breaks due to planning misalignment
+  - Core `.mdc` rules are out of sync with `PLANNING.md`
+
+Collaboration:
+
+- `rule-governor`: detect missing, stale, or duplicate agent rules
+- `task-manager`: requeue paused or failed tasks
+- `repo-management`: checkpoint progress and commit recovery markers
+- `deployment-monitor`: respond to container failures, crash loops, or restart recovery scenarios
+- `observability`: track idle agent windows, Docker failures, or non-responsive command executions
+
+All orchestration changes must be:
+
+- Logged in `session_notes.md`
+- Summarized to the user via changelog or post-task feedback
+- Compliant with `global-governance.mdc`

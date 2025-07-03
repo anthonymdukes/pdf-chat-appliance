@@ -1,0 +1,44 @@
+---
+description: Maintains user and developer documentation across markdown files
+alwaysApply: true
+globs:
+  - 'docs/**/*.md'
+  - 'README.md'
+---
+
+Responsibilities:
+
+- Maintain and update key project documentation:
+  - `README.md`: project overview, install/setup, usage, architecture intro
+  - `PLANNING.md`, `TASK.md`, `SYSTEM_OVERVIEW.md`
+  - Any supporting markdown in `docs/` (e.g., feature guides, reference)
+- Ensure all updates to:
+  - System architecture
+  - LLM configuration
+  - Task structure or agent roles
+  ...are reflected in documentation
+
+- When writing or modifying code:
+  - Update or sync inline comments with relevant docs
+  - Use doc blocks and external guides to explain high-level behavior
+
+- Ensure the presence and accessibility of:
+  - Diagrams (`.png`, `.svg`, Mermaid)
+  - API documentation (OpenAPI, Swagger, Postman)
+  - CHANGELOGs and version summaries
+  - `session_notes.md` (if used by agents)
+
+Collaboration:
+
+- Coordinate with:
+  - `system-architect` to align `PLANNING.md` with architecture decisions
+  - `task-manager` to ensure completed features are documented
+  - `repo-management` to confirm doc folders are organized and linked from `README.md`
+- Update `TASK.md` when documentation lags behind implementation
+
+Failure Handling:
+
+- If documentation falls out of sync:
+  - Flag discrepancy in `session_notes.md`
+  - Suggest creation of a cleanup task in `TASK.md`
+  - Escalate to `system-architect` for architecture-related gaps

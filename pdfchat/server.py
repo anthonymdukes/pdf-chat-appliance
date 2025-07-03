@@ -7,18 +7,22 @@ and serving the WebUI interface.
 """
 
 import os
+import logging
 from llama_index.core import Settings
+
+# Setup logger for this module
+logger = logging.getLogger(__name__)
 
 # Try to import optional dependencies, provide stubs if not available
 try:
-    from llama_index.embeddings.ollama import OllamaEmbedding
+    from llama_index.embeddings.huggingface import HuggingFaceEmbedding
     from llama_index.llms.ollama import Ollama
-    # Use Ollama for both embeddings and LLM since we're running Ollama locally
-    Settings.embed_model = OllamaEmbedding(model_name="mistral", base_url="http://ollama:11434")
+    # Use nomic-embed-text-v1.5 for embeddings as specified in llm-config.mdc
+    Settings.embed_model = HuggingFaceEmbedding(model_name="nomic-ai/nomic-embed-text-v1.5", trust_remote_code=True)
     Settings.llm = Ollama(model="mistral", base_url="http://ollama:11434")
-    print(f"[DEBUG] Using Ollama embeddings and LLM with mistral model", flush=True)
+    logger.info("Using nomic-embed-text-v1.5 for embeddings and mistral for LLM as per llm-config.mdc")
 except ImportError:
-    print("[DEBUG] OllamaEmbedding/Ollama not available, using default")
+    logger.warning("HuggingFaceEmbedding/Ollama not available, using default")
 
 from flask import Flask, request, jsonify
 from typing import Optional, Dict, Any, List
@@ -160,6 +164,24 @@ class QueryServer:
     def _setup_routes(self) -> None:
         """Setup Flask routes."""
         
+        @self.app.errorhandler(404)
+        def not_found(error):
+            return jsonify({
+                "error": "Endpoint not found",
+                "guidance": "Please check the API documentation at / for available endpoints",
+                "available_endpoints": [
+                    "/health", "/stats", "/documents", "/query", "/upload", "/context"
+                ]
+            }), 404
+        
+        @self.app.errorhandler(500)
+        def internal_error(error):
+            logger.error(f"Internal server error: {error}")
+            return jsonify({
+                "error": "Internal server error",
+                "guidance": "Please check the server logs for details and try again later"
+            }), 500
+        
         @self.app.route("/query", methods=["POST"])
         def query():
             """Handle PDF queries with cross-vendor intelligence."""
@@ -167,9 +189,20 @@ class QueryServer:
                 try:
                     data = request.get_json()
                 except BadRequest:
-                    return jsonify({"error": "Invalid JSON in request body"}), 400
+                    return jsonify({
+                        "error": "Invalid JSON in request body",
+                        "guidance": "Please ensure your request contains valid JSON with a 'question' field"
+                    }), 400
                 if not data or "question" not in data:
-                    return jsonify({"error": "Missing 'question' in request"}), 400
+                    return jsonify({
+                        "error": "Missing 'question' in request",
+                        "guidance": "Please include a 'question' field in your JSON request",
+                        "example": {
+                            "question": "What is the main topic of the document?",
+                            "top_k": 5,
+                            "user_id": "anonymous"
+                        }
+                    }), 400
                 question = data["question"]
                 top_k = data.get("top_k", 5)  # Increased for cross-vendor queries
                 user_id = data.get("user_id", "anonymous")
@@ -240,7 +273,7 @@ class QueryServer:
                     })
                     
                 except Exception as e:
-                    print(f"[ERROR] Query processing failed: {e}", flush=True)
+                    logger.error(f"Query processing failed: {e}")
                     
                     # Enhanced fallback for cross-vendor queries
                     if query_analysis['is_cross_vendor']:
@@ -294,7 +327,7 @@ Technical error: {str(e)}"""
                         uploaded_count += 1
                 
                 if uploaded_count > 0:
-                    # Try to ingest the documents (may fail due to embedding issues)
+                    # Try to ingest the documents
                     try:
                         self.ingestion.ingest_pdfs()
                         return jsonify({
@@ -305,7 +338,7 @@ Technical error: {str(e)}"""
                         return jsonify({
                             "message": f"Successfully uploaded {uploaded_count} PDF(s), but processing failed: {str(e)}",
                             "uploaded_count": uploaded_count,
-                            "warning": "Document processing failed due to embedding configuration issues"
+                            "warning": "Document processing failed - check logs for details"
                         })
                 else:
                     return jsonify({"error": "No valid PDF files uploaded"}), 400
@@ -346,7 +379,78 @@ Technical error: {str(e)}"""
         @self.app.route("/health", methods=["GET"])
         def health():
             """Health check endpoint."""
-            return jsonify({"status": "healthy", "service": "pdf-chat-appliance"})
+            return jsonify({
+                "status": "healthy", 
+                "service": "pdf-chat-appliance",
+                "version": "1.0.0",
+                "models": {
+                    "embedding": "nomic-embed-text-v1.5",
+                    "llm": "mistral"
+                },
+                "vector_store": "qdrant"
+            })
+        
+        @self.app.route("/stats", methods=["GET"])
+        def get_stats():
+            """Get system statistics and document counts."""
+            try:
+                import os
+                docs_dir = self.config.docs_dir
+                if os.path.exists(docs_dir):
+                    files = [f for f in os.listdir(docs_dir) if f.endswith(('.pdf', '.txt', '.md', '.docx', '.csv', '.rtf'))]
+                    total_size = sum(os.path.getsize(os.path.join(docs_dir, f)) for f in files)
+                else:
+                    files = []
+                    total_size = 0
+                
+                return jsonify({
+                    "documents": {
+                        "count": len(files),
+                        "total_size_mb": round(total_size / (1024 * 1024), 2),
+                        "types": {
+                            "pdf": len([f for f in files if f.endswith('.pdf')]),
+                            "txt": len([f for f in files if f.endswith('.txt')]),
+                            "md": len([f for f in files if f.endswith('.md')]),
+                            "docx": len([f for f in files if f.endswith('.docx')]),
+                            "csv": len([f for f in files if f.endswith('.csv')]),
+                            "rtf": len([f for f in files if f.endswith('.rtf')])
+                        }
+                    },
+                    "system": {
+                        "vector_store": "qdrant",
+                        "embedding_model": "nomic-embed-text-v1.5",
+                        "llm_model": "mistral"
+                    }
+                })
+            except Exception as e:
+                logger.error(f"Failed to get stats: {e}")
+                return jsonify({"error": str(e)}), 500
+        
+        @self.app.route("/documents", methods=["GET"])
+        def list_documents():
+            """List all uploaded documents."""
+            try:
+                import os
+                docs_dir = self.config.docs_dir
+                if not os.path.exists(docs_dir):
+                    return jsonify({"documents": []})
+                
+                documents = []
+                for filename in os.listdir(docs_dir):
+                    if filename.endswith(('.pdf', '.txt', '.md', '.docx', '.csv', '.rtf')):
+                        file_path = os.path.join(docs_dir, filename)
+                        stat = os.stat(file_path)
+                        documents.append({
+                            "name": filename,
+                            "size_mb": round(stat.st_size / (1024 * 1024), 2),
+                            "uploaded": stat.st_mtime,
+                            "type": filename.split('.')[-1].upper()
+                        })
+                
+                return jsonify({"documents": documents})
+            except Exception as e:
+                logger.error(f"Failed to list documents: {e}")
+                return jsonify({"error": str(e)}), 500
         
         @self.app.route("/", methods=["GET"])
         def index():
@@ -356,11 +460,13 @@ Technical error: {str(e)}"""
                 "description": "This is a backend-first appliance. Use Open WebUI at http://localhost:8080 for all document chat functionality.",
                 "endpoints": {
                     "health": "/health",
+                    "stats": "/stats (system statistics)",
+                    "documents": "/documents (list uploaded files)",
                     "query": "/query (document chat)",
                     "upload": "/upload (document ingestion)",
                     "context": "/context"
                 },
-                "frontend": "http://localhost:8080 (Open WebUI - ONLY interface)",
+                "frontend": "http://localhost:8080 (Open WebUI - PRIMARY interface)",
                 "note": "All document upload and chat functionality is accessed through Open WebUI"
             })
     
@@ -369,5 +475,5 @@ Technical error: {str(e)}"""
         host = host or self.config.host
         port = port or self.config.port
         
-        print(f"[+] Starting PDF Chat Appliance server on {host}:{port}")
+        logger.info(f"Starting PDF Chat Appliance server on {host}:{port}")
         self.app.run(host=host, port=port, debug=debug) 

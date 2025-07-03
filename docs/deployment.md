@@ -19,7 +19,7 @@ docker-compose up --build
 ```
 
 #### Access
-- WebUI: http://localhost:80
+- Open WebUI: http://localhost:8080
 - API: http://localhost:5000
 
 ### 2. OVA Deployment (Recommended)
@@ -113,7 +113,7 @@ sudo chown -R pdfchat:pdfchat /var/log/pdfchat
 
 #### Memory Issues
 - Increase VM RAM
-- Check ChromaDB memory usage
+- Check Qdrant memory usage
 - Monitor system resources
 
 ### Log Locations
@@ -125,8 +125,8 @@ sudo chown -R pdfchat:pdfchat /var/log/pdfchat
 
 ### Data Backup
 ```bash
-# Backup ChromaDB data
-sudo tar -czf chroma_backup.tar.gz /var/lib/pdfchat/chroma_store
+# Backup Qdrant data
+sudo tar -czf qdrant_backup.tar.gz /var/lib/pdfchat/qdrant_data
 
 # Backup configuration
 sudo tar -czf config_backup.tar.gz /etc/pdfchat
@@ -145,7 +145,7 @@ sudo systemctl restart pdfchat
 
 ### Horizontal Scaling
 - Load balancer with multiple instances
-- Shared ChromaDB backend
+- Shared Qdrant backend
 - Redis for session management
 
 ### Vertical Scaling

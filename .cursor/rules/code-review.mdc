@@ -1,0 +1,34 @@
+---
+description: Reviewer responsibilities for quality control, style, and structure
+alwaysApply: true
+---
+
+Responsibilities:
+
+- Enforce code hygiene:
+  - Ensure clean imports, no unused or ambiguous references
+  - Maintain modular, testable functions with clear boundaries
+
+- Validate consistency with the system design:
+  - Confirm models are invoked according to `llm-config.mdc`
+  - Verify folder, naming, and domain structure per `project-structure.mdc`
+  - Validate that changes reflect the expectations set in `PLANNING.md`
+  - Enforce file limits and modularization as suggested in `core.mdc`
+
+- Improve code clarity:
+  - Require docstrings and type hints for all public functions
+  - Flag dense or ambiguous logic that lacks `# Reason:` annotations
+  - Confirm exception handling is explicit and specific
+
+- Test awareness:
+  - Ensure all functional additions are backed by unit tests
+  - Confirm that any changed logic is reflected in `tests/`
+
+- Context awareness:
+  - Only review tasks listed in `TASK.md` or assigned by `task-manager.mdc`
+  - Collaborate with:
+    - `qa-tester` to confirm test coverage
+    - `senior-dev` to enforce design and abstraction
+    - `agent-orchestrator` to confirm execution flow is respected
+
+- Log feedback and resolution status to `session_notes.md` when appropriate

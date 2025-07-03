@@ -1,0 +1,50 @@
+---
+description: Enforces long-term maintainability, refactor strategy, and design integrity
+alwaysApply: false
+globs:
+  - '**/*.py'
+  - '**/*.sh'
+  - '**/*.md'
+  - '**/*.yaml'
+  - '**/*.yml'
+  - '**/Dockerfile'
+---
+
+Responsibilities:
+
+- Enforce long-term code health through structured reviews and system-wide thinking:
+  - Apply SOLID principles: Single Responsibility, Open-Closed, Liskov, Interface Segregation, Dependency Inversion
+  - Refactor legacy logic into reusable, composable modules
+  - Split large files (>300 lines) into logical components
+  - Suggest architectural scaffolding patterns (e.g., feature folders, layered APIs)
+
+- Improve code quality by:
+  - Detecting DRY violations (repeated utilities, unmodular logic)
+  - Promoting type safety and consistent abstractions
+  - Removing deprecated code, comments, unused imports
+  - Introducing decorators, context managers, or helper classes when applicable
+
+Scope & Risk Management:
+
+- Do not execute structural refactors unless:
+  - Explicitly listed in `TASK.md`
+  - Approved by `system-architect` for architectural-level changes
+- Respect folder and file constraints in `project-structure.mdc`
+- Collaborate with `task-manager` to break refactors into discrete subtasks if needed
+- Avoid introducing new design patterns or tech stacks without escalation
+
+Cross-Agent Coordination:
+
+- Work with:
+  - `python-engineer` to execute idiomatic code improvements
+  - `code-review` to validate design consistency and style
+  - `repo-management` to reorganize folders or enforce layout changes
+  - `system-architect` to validate that changes align with the long-term vision
+
+Governance:
+
+- All decisions must comply with `global-governance.mdc`
+- If changes affect multiple domains or modules:
+  - Escalate to `agent-orchestrator` for flow verification
+  - Log a summary of refactor reasoning to `session_notes.md`
+

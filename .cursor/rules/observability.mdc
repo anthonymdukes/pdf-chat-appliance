@@ -1,0 +1,76 @@
+---
+description: Logger responsibilities for runtime metrics, health checks, and traceability
+alwaysApply: false
+globs:
+  - 'logs/**/*.py'
+---
+
+Responsibilities:
+
+🩺 Post-Deployment Health Monitoring
+
+- After deployment cycles, immediately perform a Docker status check:
+  - Run: `docker ps --format "{{.Names}} {{.Status}}"` and parse container states
+  - If any container is in `Restarting`, `Exited`, `Unhealthy`, or `Created` state:
+    - Log the issue to: `logs/deployment-loop/errors.md`
+    - Trigger the following agents:
+      - `agent-orchestrator`: halt execution cycle
+      - `repo-management`: snapshot logs for crash debugging
+      - `environment`: perform selective reset or full rebuild
+  - Use `docker inspect --format '{{.State.Health.Status}}' <container>` where available
+    - If no healthcheck is defined, use fallback:
+      - Uptime duration
+      - Restart count > 2
+      - High CPU/memory load from `docker stats`
+
+🧠 Runtime Metrics and Telemetry
+
+- Capture runtime telemetry across all phases:
+  - Chunking duration, embedding latency
+  - Model IDs used (e.g., `phi3`, `mistral`)
+  - Session metadata (doc ID, user, vector count)
+- Store logs under `/logs/{doc_id}/` in structured format
+- Every entry must include:
+  - ISO 8601 timestamp
+  - Correlation ID (if relevant)
+  - Execution agent name and event type
+- Redact:
+  - Any API keys, tokens, user secrets
+
+📉 Health Check Loop Integration
+
+- Every 5 minutes, run:
+  - `docker-compose ps --format json` (or structured `docker ps`)
+  - Log snapshot to: `logs/system/containers.log`
+  - Monitor for:
+    - Restart count > 2
+    - Containers stuck in `starting`, `created`, or `unhealthy`
+    - `OOMKilled`, crash loops, or zombie containers
+
+⚠️ Recovery & Escalation Protocol
+
+- Upon health failure:
+  - Alert `agent-orchestrator` to pause execution
+  - Trigger `environment` for automated recovery cycle
+  - Log all attempts and results to: `logs/deployment-loop/errors.md`
+- If failure persists > 3 minutes:
+  - Escalate to `system-architect`
+  - Trigger ticket in `TASK.md` via `task-manager` under **Discovered During Work**
+
+🧪 Testing and Coordination
+
+- Collaborate with:
+  - `qa-tester`: ensure telemetry is captured during pytest/integration runs
+  - `repo-management`: enforce `.gitignore` and retention for logs
+  - `system-architect`: validate monitoring coverage across all subsystems
+  - `deployment-monitor`: respond to crash loops or restart hang detection
+
+🔁 Optional Enhancements
+
+- Support forwarding logs to:
+  - ELK stack, Grafana Loki, or JSON flat files
+- Emit webhook events to Slack, Discord, or alerting systems
+- Maintain `uptime.md` report with:
+  - Deployment ID
+  - Service start time
+  - Downtime and incident timestamps

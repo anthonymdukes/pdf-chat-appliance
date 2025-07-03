@@ -1,0 +1,65 @@
+---
+description: Controls model routing, backend selection, and AUTO-mode execution targets
+alwaysApply: true
+---
+
+### LLM Architecture
+
+- Agent Mode: Multi-agent with role-specific model preferences
+- Execution Mode: AUTO-enabled, no manual confirmation required
+- Environment: Local Ollama runtime (CPU or GPU-accelerated), fallback to cloud when unreachable
+- Model control is governed by `llm-specialist`, validated by `system-architect`, and enforced by `agent-orchestrator`
+
+---
+
+### Model Assignments
+
+| Task / Role         | Preferred Model                                |
+|---------------------|-------------------------------------------------|
+| Embedding           | `sentence-transformers:nomic-embed-text-v1.5`   |
+| Chunking (split)    | `ollama:phi3`                                   |
+| RAG Completion      | `ollama:mistral`                                |
+| Code Generation     | `gpt-4` or `claude-3-sonnet` (Pro fallback)     |
+| Auto-rewrite / Fix  | `gpt-4` or `cursor:default`                     |
+| Planning            | `mistral` or `gpt-3.5-turbo`                    |
+
+> Model assignments must not be overridden by default. All reassignment requests must route through `llm-specialist`.
+
+---
+
+### Fallback and Failover
+
+- Retry once with fallback if primary model fails
+- If unresolvable:
+  - Log to `logs/llm_failures/{agent}/{timestamp}.md`
+  - Notify `llm-specialist` for override or downgrade
+- Prefer lowest-latency local model unless override is defined in:
+  - `PLANNING.md`
+  - `llm-specialist.mdc`
+
+---
+
+### Behavior Guidelines
+
+- No agent may hardcode model names in logic or responses
+- All agents must reference this file before assigning or invoking any LLM
+- Model behavior should follow architecture and flow as defined in `agent-flow.mdc`
+- Planning-stage agents may propose models but may not bind them to execution roles
+
+---
+
+### Compatible Backends
+
+- **Local**: Ollama, LM Studio, containerized model APIs
+- **Remote**: OpenAI, Anthropic, Groq, Together.ai
+- **Embeddings**: ChromaDB (default), Weaviate, Qdrant, pgvector
+
+Agents must remain backend-agnostic, but model-specific. Any backend substitution must be approved by `system-architect` and tracked by `repo-management`.
+
+---
+
+### Policy Enforcement
+
+- Governed by `global-governance.mdc`
+- Agents violating model control policy will be paused by `agent-orchestrator`
+- All changes must be reflected in `session_notes.md` and optionally in `CHANGELOG.md`

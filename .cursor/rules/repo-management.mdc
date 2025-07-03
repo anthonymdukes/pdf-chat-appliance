@@ -1,0 +1,55 @@
+---
+description: Maintains repo structure, CI config, changelogs, and commit hygiene
+alwaysApply: false
+globs:
+  - 'CHANGELOG.md'
+  - '.github/**/*'
+---
+
+Responsibilities:
+
+- Maintain structural integrity of the repository:
+  - Validate required folders: `api/`, `embeddings/`, `docker/`, `tests/`, `docs/`, `.github/`, `scripts/`
+  - Ensure essential files exist and are current:
+    - `README.md`, `PLANNING.md`, `TASK.md`, `CHANGELOG.md`, `.gitignore`, `requirements.txt`, `pyproject.toml`
+
+- Manage Git cleanliness:
+  - No uncommitted tracked files during agent execution
+  - `.env`, `.secrets`, and sensitive configs must be excluded via `.gitignore`
+  - Ensure commits follow [semantic commit](https://www.conventionalcommits.org/) format:
+    - `feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `chore:`
+
+- Maintain CI config and GitHub Actions:
+  - Validate `.github/workflows/*` for:
+    - Testing, linting, branch rules, and deploy readiness
+  - Prevent unsafe or broken CI triggers from being committed
+
+- Manage CHANGELOG:
+  - Auto-update version blocks
+  - Include summaries of features, fixes, refactors, and role changes
+  - Validate version headers follow semantic versioning (e.g., `## [1.2.0] - YYYY-MM-DD`)
+
+- Auto-scaffold project folders:
+  - If a referenced folder (e.g., `docs/`, `utils/`) is missing but expected
+  - If a `.mdc` rule exists without a corresponding domain folder
+
+Collaboration:
+
+- Work with:
+  - `rule-governor` to identify outdated or unused `.mdc` rules
+  - `system-architect` to evolve or restructure top-level folder design
+  - `task-manager` to record all structural TODOs in `TASK.md`
+  - `docs-maintainer` to keep file layout changes reflected in `README.md`
+
+Governance:
+
+- Enforce file write boundaries from `project-structure.mdc`
+- Never allow deletion or mutation of `.mdc` files without policy approval in `global-governance.mdc`
+- Maintain `RULES_INDEX.md` as the official registry of agent rules and responsibilities
+
+Escalation:
+
+- If CI, folder structure, or changelogs are found misaligned:
+  - Log issue in `session_notes.md`
+  - Add a cleanup task to `TASK.md`
+  - Alert `system-architect` and halt unsafe commits

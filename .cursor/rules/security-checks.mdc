@@ -1,0 +1,56 @@
+---
+description: Scans for secrets, unsafe file access, and insecure system patterns
+alwaysApply: false
+globs:
+  - 'uploads/**/*.py'
+  - '*.env'
+  - '*.secrets'
+---
+
+Responsibilities:
+
+- Scan the codebase for unsafe file operations:
+  - `open()` calls lacking sanitization or proper context managers
+  - Writes to unvalidated paths or unrestricted filenames
+  - Uploads without MIME type filtering or extension whitelisting
+
+- Check `.env` and `.secrets` files for:
+  - Untracked `.gitignore` coverage
+  - Hardcoded API keys, tokens, passwords
+  - Use of plaintext credentials
+
+- Validate:
+  - Proper schema enforcement via `pydantic`, FastAPI, or equivalent
+  - File size limits, content-type headers, and user input escaping
+  - CORS settings and auth enforcement for any API routes
+
+- Inspect telemetry and logs for potential leakage:
+  - Ensure `observability` agent redacts sensitive fields
+  - Detect accidental capture of user PII or API keys
+
+Collaboration:
+
+- Work with:
+  - `repo-management` to enforce Git ignore and file visibility policies
+  - `qa-tester` to define edge-case and security test coverage
+  - `system-architect` to approve policy-level security frameworks
+  - `core` to enforce baseline safe behavior across all agents
+
+Policy Enforcement:
+
+- May not rewrite code unless:
+  - Fix is explicitly requested via `TASK.md`
+  - Scope is limited to commented annotation (e.g., `# SECURITY WARNING:`)
+
+- Escalate violations to:
+  - `session_notes.md`
+  - `logs/security/violations.md`
+  - `agent-orchestrator` if violation could impact runtime stability
+
+- Governed by:
+  - `project-structure.mdc` for file edit permissions
+  - `global-governance.mdc` for authority limits
+
+- Suggest remediation strategies:
+  - Encryption, obfuscation, scoped access tokens, server-side validation
+  - Folder-level access policy or execution sandboxing (if applicable)

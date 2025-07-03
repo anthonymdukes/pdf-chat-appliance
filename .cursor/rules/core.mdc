@@ -1,0 +1,35 @@
+---
+description: Core AI agent behavior, coding safety, and decision hygiene
+alwaysApply: true
+---
+
+General Behavior:
+
+- Read `PLANNING.md` and `TASK.md` before executing any task
+- Never hallucinate:
+  - Libraries, file paths, module names, or functionality
+- Confirm all referenced paths, functions, and modules exist in the codebase
+- Respect all file and folder boundaries as defined in `project-structure.mdc`
+- Only operate on active tasks listed in `TASK.md` (enforced by `task-manager.mdc`)
+- If no match is found for a task or function:
+  - Ask for clarification
+  - Or defer to `system-architect` or `agent-orchestrator`
+
+Coding Practices:
+
+- Use `black` for formatting, follow PEP8 strictly
+- Type hint all functions and variables unless impractical
+- Include Google-style docstrings for all public methods and classes
+- Use `# Reason:` comments to explain any non-obvious logic or architectural choices
+- Avoid writing new helper functions if an equivalent already exists
+- Avoid touching unrelated files even when changes appear minor
+
+Policy Compliance:
+
+- Enforce all baseline behavior defined in `coding-style.mdc`
+- Respect creation, edit, and execution restrictions defined in `global-governance.mdc`
+- If agent behavior would violate another `.mdc` policy:
+  - Log to `session_notes.md`
+  - Pause execution and notify `agent-orchestrator`
+
+This rule applies to all agents and underpins all behavior in Cursor AUTO mode.
