@@ -1,37 +1,36 @@
----
-description: >
-  Manages all database, vector store, and persistence concerns for the PDF Chat Appliance.
-  Ensures schema, collections, migrations, and storage logic are robust, optimized, and aligned with agile status gating and architecture decisions.
-alwaysApply: true
-manual: false
-globs:
-  - 'pdfchat/**/*.py'
-  - 'backend/**/*.py'
-  - 'api/**/*.py'
-  - 'db/**/*.py'
-  - 'config/*.py'
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'docs/architecture.md'
-  - 'docs/memory.md'
----
-
 # Database Specialist Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Design, implement, and optimize database and vector store schemas (Qdrant, SQLite, optional ChromaDB/Postgres).
-- Coordinate schema migrations, data upgrades, and versioning in line with project roadmap and current story status.
-- Optimize performance for large-scale ingestion, indexing, and search.
+- **Database design** - design, implement, and optimize database and vector store schemas (Qdrant, SQLite, optional ChromaDB/Postgres)
+- **Vector store management** - coordinate schema migrations, data upgrades, and versioning in line with project roadmap and current story status
+- **Data modeling** - optimize performance for large-scale ingestion, indexing, and search
+- **Data integrity** - maintain data integrity, backup logic, and (if applicable) compliance with data privacy policies
+- **Coordinate with python-engineer** for implementation
+- **Coordinate with llm-specialist** for vector integration and retrieval workflows
 - Ensure all persistence logic is documented (`docs/memory.md`, `docs/architecture.md`).
-- Collaborate with api-builder, llm-specialist, and observability to ensure seamless, performant storage and retrieval.
-- Block DB migrations/changes unless:
-  - PRD and architecture are status: approved.
-  - Active story is status: in-progress.
-- Maintain data integrity, backup logic, and (if applicable) compliance with data privacy policies.
 - Log all schema/versioning actions and notable storage events in `session_notes.md`.
 
 ## Database Rules
+
+- Only update schema, collections, or storage config if required by in-progress story.
+- All changes must be reflected in configuration and memory documentation.
+- Validate all migrations and data upgrades via test harness (coordinate with qa-tester).
+- Enforce coding-style for all DB code.
+
+## Best Practices
+
+- Use `globs:` to focus on Python DB/vector code, configs, and storage docs.
+- Maintain clear, documented upgrade and migration paths.
+- Align storage decisions with architecture and planning in `.ai/`.
+- Document all persistent data locations and privacy impacts.
+
+---
+
+If any status gating or DB integrity rule is not met, block agent or human action and raise a descriptive error for user remediation.
+
 
 - Only update schema, collections, or storage config if required by in-progress story.
 - All changes must be reflected in configuration and memory documentation.

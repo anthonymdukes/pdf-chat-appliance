@@ -1,34 +1,29 @@
----
-description: >
-  Monitors the deployment status, health, and lifecycle of all core services in the PDF Chat Appliance.
-  Automates health checks, restarts, and escalations to ensure high availability, production reliability, and seamless recovery.
-alwaysApply: true
-manual: false
-globs:
-  - 'scripts/*.ps1'
-  - 'scripts/*.sh'
-  - 'docker-compose.*'
-  - 'deployment/**'
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'docs/deployment.md'
-  - 'README.md'
----
-
 # Deployment Monitor Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Monitor the health and status of all project services (API, backend, Qdrant, Ollama, WebUI, Docker, Nginx, etc.).
-- Perform regular health checks, restart failed services, and log all incidents in `session_notes.md` and `logs/`.
-- Block workflow progress or agent execution if any core service is offline, misconfigured, or in a degraded state.
-- Automate self-healing actions (restart, cleanup, redeploy) when possible; escalate persistent or critical failures to the user immediately.
-- Document all deployment/monitoring actions and major events in `docs/deployment.md`.
-- Collaborate with observability, system-architect, and environment agents to maintain reliability.
-- Block deployment changes unless:
-  - PRD and architecture are status: approved.
-  - Active story is status: in-progress.
-- Recommend fresh context or full system reset after major upgrades or persistent incidents.
+- **Deployment health monitoring** - monitor the health and status of all project services (API, backend, Qdrant, Ollama, WebUI, Docker, Nginx, etc.)
+- **Service status tracking** - perform regular health checks, restart failed services, and log all incidents in `session_notes.md` and `logs/`
+- **Automated recovery** - automate self-healing actions (restart, cleanup, redeploy) when possible; escalate persistent or critical failures to the user immediately
+- **Deployment documentation** - document all deployment/monitoring actions and major events in `docs/deployment.md`
+- **Coordinate with observability** for monitoring data and system health
+- **Coordinate with environment** for environment status and configuration
+- **Coordinate with system-architect** to maintain reliability
+
+### Enhanced Responsibilities (Phase 2 Training)
+
+- **Comprehensive Health Monitoring**: Implement multi-layered health checks for all services and dependencies using Docker health checks, Kubernetes probes, and custom monitoring scripts.
+- **Automated Recovery**: Design intelligent restart and recovery mechanisms with proper backoff strategies and exponential retry logic.
+- **Container Orchestration**: Optimize container lifecycle management, resource allocation, and service discovery patterns.
+- **Alert Management**: Configure intelligent alerting with proper severity levels, escalation policies, and alert grouping to prevent alert fatigue.
+- **Performance Monitoring**: Track system performance metrics, resource utilization patterns, and capacity planning indicators.
+- **Progressive Health Checks**: Implement layered health checks starting with basic connectivity, then application functionality, and finally business logic validation.
+- **Graceful Degradation**: Design fallback mechanisms and circuit breakers for when dependencies are unavailable or degraded.
+- **Resource Monitoring**: Track CPU, memory, disk, and network usage with appropriate thresholds and predictive scaling.
+- **Automated Remediation**: Implement self-healing capabilities for common failure scenarios with proper logging and audit trails.
+- **Comprehensive Logging**: Ensure detailed logging for troubleshooting, incident response, and performance analysis.
 
 ## Monitoring Rules
 
@@ -42,6 +37,41 @@ globs:
 - Integrate with observability and logging systems for full-stack visibility.
 - Enforce markdownlint, coding-style, and project formatting standards in all logs/docs.
 - Maintain up-to-date deployment and recovery procedures in documentation.
+
+### Enhanced Best Practices (Phase 2 Training)
+
+- **Progressive Health Checks**: Start with basic connectivity, then test application functionality, and finally validate business logic.
+- **Graceful Degradation**: Implement fallback mechanisms when dependencies are unavailable or degraded.
+- **Resource Monitoring**: Track CPU, memory, disk, and network usage with appropriate thresholds and predictive scaling.
+- **Automated Remediation**: Self-healing capabilities for common failure scenarios with proper logging and audit trails.
+- **Comprehensive Logging**: Detailed logging for troubleshooting, incident response, and performance analysis.
+- **Intelligent Alerting**: Configure alerts with proper severity levels, grouping, and escalation policies to prevent alert fatigue.
+- **Exponential Backoff**: Implement intelligent retry mechanisms with exponential backoff for recovery operations.
+- **Service Discovery**: Optimize container orchestration with proper service discovery and load balancing.
+- **Capacity Planning**: Monitor resource utilization patterns and implement predictive scaling based on usage trends.
+- **Incident Response**: Maintain detailed incident logs and recovery procedures for continuous improvement.
+
+---
+
+If any core service is unhealthy, auto-recovery fails, or monitoring rules are not satisfied, block all further agent or human action and raise a descriptive error for user remediation.
+
+- Must detect GPU availability in WSL or container
+- Must prefer GPU-based inference if present
+- Must gracefully fall back to CPU with appropriate logs
+- Must log inference hardware context (CPU vs GPU) in all benchmark, inference, and testing runs
+- Must participate in multi-environment reasoning and select the optimal backend dynamically
+
+
+- **Progressive Health Checks**: Start with basic connectivity, then test application functionality, and finally validate business logic.
+- **Graceful Degradation**: Implement fallback mechanisms when dependencies are unavailable or degraded.
+- **Resource Monitoring**: Track CPU, memory, disk, and network usage with appropriate thresholds and predictive scaling.
+- **Automated Remediation**: Self-healing capabilities for common failure scenarios with proper logging and audit trails.
+- **Comprehensive Logging**: Detailed logging for troubleshooting, incident response, and performance analysis.
+- **Intelligent Alerting**: Configure alerts with proper severity levels, grouping, and escalation policies to prevent alert fatigue.
+- **Exponential Backoff**: Implement intelligent retry mechanisms with exponential backoff for recovery operations.
+- **Service Discovery**: Optimize container orchestration with proper service discovery and load balancing.
+- **Capacity Planning**: Monitor resource utilization patterns and implement predictive scaling based on usage trends.
+- **Incident Response**: Maintain detailed incident logs and recovery procedures for continuous improvement.
 
 ---
 

@@ -119,6 +119,7 @@ sequenceDiagram
 ## 🧠 Model Configuration
 
 ### LLM Stack
+
 - **Embedding Model**: `sentence-transformers:nomic-embed-text-v1.5`
 - **Chunking Model**: `ollama:phi3`
 - **RAG Completion**: `ollama:mistral`
@@ -126,6 +127,7 @@ sequenceDiagram
 - **Planning**: `mistral` or `gpt-3.5-turbo`
 
 ### Vector Storage
+
 - **Primary**: Qdrant (enterprise-grade)
 - **Backup**: ChromaDB (local development)
 - **Namespacing**: Per-user, per-document, per-session
@@ -133,12 +135,14 @@ sequenceDiagram
 ## 🏢 Enterprise Features
 
 ### Multi-Vendor Support
+
 - **Vendor Detection**: Automatic identification of VMware, Cisco, Dell, HPE, etc.
 - **Cross-Vendor Intelligence**: Integration guidance across vendor boundaries
 - **Vendor-Specific Collections**: Isolated vector storage per vendor
 - **Enterprise Metadata**: Rich tagging and categorization
 
 ### Scalability Features
+
 - **Large File Processing**: Optimized handling of multi-MB PDFs
 - **Semantic Chunking**: Structure-aware document splitting
 - **Memory Management**: Efficient vector storage and retrieval
@@ -147,6 +151,7 @@ sequenceDiagram
 ## 🔧 Development Workflow
 
 ### Agent Execution Flow
+
 1. **Task Manager**: Validates tasks against `TASK.md`
 2. **System Architect**: Designs architecture and structure
 3. **API Builder**: Implements core functionality
@@ -156,6 +161,7 @@ sequenceDiagram
 7. **Docs Maintainer**: Updates documentation
 
 ### Quality Gates
+
 - All code must pass type checking
 - Unit tests required for new features
 - Documentation must be updated
@@ -165,6 +171,7 @@ sequenceDiagram
 ## 📊 Performance Characteristics
 
 ### Expected Performance
+
 - **Ingestion**: ~10MB PDF in 30-60 seconds
 - **Query Response**: 2-5 seconds for typical questions
 - **Vector Search**: <100ms for similarity matching
@@ -172,6 +179,7 @@ sequenceDiagram
 - **Storage**: ~100MB per 1MB of PDF content
 
 ### Scalability Limits
+
 - **Concurrent Users**: 50+ simultaneous queries
 - **Document Size**: Up to 100MB per PDF
 - **Total Storage**: 10GB+ vector database
@@ -180,13 +188,15 @@ sequenceDiagram
 ## 🔒 Security & Compliance
 
 ### Data Protection
+
 - **Local Processing**: All LLM operations local
 - **No External Calls**: No data sent to cloud services
 - **Encrypted Storage**: Vector data encrypted at rest
 - **Access Control**: User-based document isolation
 
 ### Audit Trail
+
 - **Structured Logging**: All operations logged
 - **Chat History**: Complete conversation persistence
 - **Agent Actions**: Full audit trail of autonomous operations
-- **Health Monitoring**: Continuous system health tracking 
+- **Health Monitoring**: Continuous system health tracking

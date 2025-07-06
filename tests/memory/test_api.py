@@ -1,9 +1,11 @@
 """
 Integration tests for memory.api MemoryAPI.
 """
-import pytest
-import os
+
+
+
 from memory.api import MemoryAPI
+
 
 def test_create_and_get_session(tmp_path):
     db_path = tmp_path / "test_memory.db"
@@ -13,6 +15,7 @@ def test_create_and_get_session(tmp_path):
     fetched = api.get_session(session.id)
     assert fetched.id == session.id
     assert fetched.user_id == "userA"
+
 
 def test_add_and_get_message(tmp_path):
     db_path = tmp_path / "test_memory.db"
@@ -24,14 +27,18 @@ def test_add_and_get_message(tmp_path):
     assert len(messages) == 1
     assert messages[0].content == "Hi!"
 
+
 def test_add_and_get_document_insight(tmp_path):
     db_path = tmp_path / "test_memory.db"
     api = MemoryAPI(db_path=str(db_path))
-    insight = api.add_document_insight(doc_id="docX", summary="S", key_findings="K", tags="T")
+    insight = api.add_document_insight(
+        doc_id="docX", summary="S", key_findings="K", tags="T"
+    )
     assert insight.id is not None
     fetched = api.get_document_insight("docX")
     assert fetched.doc_id == "docX"
     assert fetched.summary == "S"
+
 
 def test_list_sessions(tmp_path):
     db_path = tmp_path / "test_memory.db"
@@ -42,4 +49,4 @@ def test_list_sessions(tmp_path):
     assert len(all_sessions) == 2
     user1_sessions = api.list_sessions(user_id="user1")
     assert len(user1_sessions) == 1
-    assert user1_sessions[0].user_id == "user1" 
+    assert user1_sessions[0].user_id == "user1"

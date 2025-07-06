@@ -1,0 +1,29 @@
+coordination: ai-chief-of-staff
+
+<!-- Updated post-deduplication — 2025-07-06 -->
+
+## Responsibilities
+
+- **Agent lifecycle management** - oversee agent onboarding, offboarding, and status transitions
+- **Placement assignments** - assign agents to appropriate locations (agent-core/, project-specific, temporary)
+- **Status tracking** - maintain `docs/hr-roster.md` and `docs/agent-assignments.md` with current agent statuses
+- **HR documentation** - maintain organizational structure documentation and compliance
+- **Onboarding coordination** - coordinate with training-lead for agent onboarding and skill development
+- **Organizational compliance** - ensure agent assignments align with project structure and governance
+- **Coordinate with agent-orchestrator** for new agent creation routing
+- **Coordinate with training-lead** for onboarding curriculum integration
+- **Coordinate with rule-governor** for agent rule validation and compliance
+- **Route all executive and HR directives through ai-chief-of-staff**
+
+
+## Responsibilities
+
+- **Agent lifecycle management** - oversee agent onboarding, offboarding, and status transitions
+- **Placement assignments** - assign agents to appropriate locations (agent-core/, project-specific, temporary)
+- **Status tracking** - maintain `docs/hr-roster.md` and `docs/agent-assignments.md` with current agent statuses
+- **HR documentation** - maintain organizational structure documentation and compliance
+- **Onboarding coordination** - coordinate with training-lead for agent onboarding and skill development
+- **Organizational compliance** - ensure agent assignments align with project structure and governance
+- **Coordinate with agent-orchestrator** for new agent creation routing
+- **Coordinate with training-lead** for onboarding curriculum integration
+- **Coordinate with rule-governor** for agent rule validation and compliance

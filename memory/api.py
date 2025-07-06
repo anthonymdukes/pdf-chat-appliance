@@ -6,8 +6,10 @@ This module provides a backend-agnostic interface for all memory operations.
 
 from .sqlite_backend import SQLiteMemoryBackend
 
+
 class MemoryAPI:
     """Unified API for persistent memory operations."""
+
     def __init__(self, backend=None, db_path="data/memory.db"):
         self.backend = backend or SQLiteMemoryBackend(db_path=db_path)
 
@@ -33,4 +35,4 @@ class MemoryAPI:
         return self.backend.add_document_insight(**kwargs)
 
     def get_document_insight(self, doc_id):
-        return self.backend.get_document_insight(doc_id) 
+        return self.backend.get_document_insight(doc_id)

@@ -18,11 +18,24 @@ services:
       - PYTHONPATH=/app
       - PDFCHAT_CONFIG_FILE=/app/config/default.yaml
       - PDFCHAT_LOG_LEVEL=INFO
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - FLASK_ENV=production
+      - FLASK_THREADED=true
+      - WORKERS=4
     depends_on:
       - ollama
       - qdrant
     networks:
       - pdfchat-network
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 8G
+        reservations:
+          cpus: '2.0'
+          memory: 4G
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
@@ -39,8 +52,19 @@ services:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
     networks:
       - pdfchat-network
+    deploy:
+      resources:
+        limits:
+          cpus: '3.0'
+          memory: 8G
+        reservations:
+          cpus: '1.5'
+          memory: 4G
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
       interval: 30s
@@ -77,8 +101,20 @@ services:
       - "6333:6333"
     volumes:
       - qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+      - QDRANT__SERVICE__GRPC_PORT=6334
+      - QDRANT__STORAGE__STORAGE_PATH=/qdrant/storage
     networks:
       - pdfchat-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
       interval: 30s

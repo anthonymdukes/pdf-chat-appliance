@@ -3,12 +3,17 @@ SQLite backend for long-term memory using SQLAlchemy.
 """
 
 import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from .models import Base, Session as SessionModel, Message, DocumentInsight
+
+from .models import Base, DocumentInsight, Message
+from .models import Session as SessionModel
+
 
 class SQLiteMemoryBackend:
     """SQLite-backed persistent memory for user sessions, messages, and document insights."""
+
     def __init__(self, db_path="data/memory.db"):
         os.makedirs(os.path.dirname(db_path), exist_ok=True)
         self.engine = create_engine(f"sqlite:///{db_path}", echo=False, future=True)
@@ -71,4 +76,4 @@ class SQLiteMemoryBackend:
             sessions = q.all()
             for session in sessions:
                 db.expunge(session)
-            return sessions 
+            return sessions

@@ -1,12 +1,45 @@
 # PDF Chat Appliance Configuration
 # Enterprise-scale configuration for multi-vendor documentation system
+# UPDATED: CPU-optimized model configuration for performance optimization
 
 # Paths (Enterprise deployment)
 docs_dir: "/var/lib/pdfchat/documents"
 persist_dir: "/var/lib/pdfchat/chroma_store"
 
-# Embedding model
+# Embedding model (CPU-optimized)
 embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+
+# CPU-Optimized Model Configuration
+models:
+  # Primary models for different operations
+  chunking_model: "phi3:cpu"              # CPU-optimized for document chunking
+  chat_model: "mistral:cpu"               # CPU-optimized for chat responses
+  embedding_model: "nomic-embed-text-v1.5" # CPU-efficient embeddings
+  
+  # Fallback chain for CPU-optimized processing
+  fallback_chain:
+    - "phi3:cpu"                          # Primary CPU model
+    - "llama2:7b:cpu"                     # Secondary CPU model
+    - "mistral:cpu"                       # Tertiary CPU model
+  
+  # Model-specific settings
+  phi3_cpu:
+    context_window: 8192
+    max_tokens: 4096
+    temperature: 0.1
+    timeout: 45
+  
+  mistral_cpu:
+    context_window: 8192
+    max_tokens: 4096
+    temperature: 0.1
+    timeout: 60
+  
+  llama2_7b_cpu:
+    context_window: 4096
+    max_tokens: 2048
+    temperature: 0.1
+    timeout: 30
 
 # Enterprise Multi-Vendor Document Processing
 enterprise:
@@ -24,6 +57,7 @@ chunking:
   batch_size: 20                         # Larger batches for efficiency
   enable_streaming: true                 # Stream processing for memory efficiency
   semantic_chunking: true                # Use semantic boundaries for chunks
+  cpu_optimized: true                    # Enable CPU-optimized chunking
 
 # File Processing (Enterprise Scale)
 file_processing:
@@ -66,8 +100,8 @@ cross_vendor:
 host: "0.0.0.0"
 port: 5000
 
-# LLM settings (Enhanced for enterprise queries)
-llm_model: "mistral"
+# LLM settings (CPU-optimized for enterprise queries)
+llm_model: "phi3:cpu"                    # Primary CPU model
 llm_base_url: "http://ollama:11434"
-llm_timeout: 60                         # Extended timeout for complex queries
-context_window: 8192                    # Larger context for multi-vendor queries 
+llm_timeout: 45                          # Optimized timeout for CPU models
+context_window: 8192                     # Larger context for multi-vendor queries 

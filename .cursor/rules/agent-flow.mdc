@@ -1,22 +1,15 @@
----
-description: >
-  Orchestrates agent handoff, workflow sequencing, and execution order in the PDF Chat Appliance.
-  Ensures all autonomous agents follow project priorities, agile status gating, and proper context management.
-alwaysApply: true
-manual: false
-globs:
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'docs/**'
-  - 'scripts/*.ps1'
-  - 'README.md'
----
-
 # Agent Flow Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Coordinate execution order and handoffs between all agents (e.g., system-architect, task-manager, api-builder, llm-specialist, code-review, qa-tester, observability).
+- **Agent workflow patterns** - design and optimize agent workflows and process patterns
+- **Agent handoff logic** - ensure process efficiency and agent interaction patterns
+- **Workflow optimization** - maintain workflow diagrams, process docs, and flow optimization guides
+- **Coordinate with agent-orchestrator** for high-level workflow coordination
+- **Coordinate with task-manager** for workflow integration and task handoff
+- **Coordinate with docs-maintainer** for workflow documentation and updates
 - Enforce agile gating: Block any agent execution unless:
   - PRD (`.ai/prd.md`) and Architecture (`.ai/arch.md`) are both status: approved.
   - Only one Epic is status: current.
@@ -36,6 +29,19 @@ globs:
 - All agent action must follow: PRD → Architecture → Epic → Story → Task → Subtask.
 - No agent may operate outside its assigned context.
 - If any gating document or status is missing, halt execution and notify user.
+- Auto-switch agent focus as workflow phase changes.
+
+## Best Practices
+
+- Use `globs:` to restrict this rule to planning, documentation, scripts, and Agile core files.
+- All changes and transitions must be recorded in project logs.
+- Comply with markdownlint, Cursor, and project formatting standards.
+- Align with goals in `PLANNING.md` and execution protocols in `workflow-pdfchat.mdc`.
+
+---
+
+If any rule is violated, agent execution is blocked and a descriptive error is raised for user remediation.
+
 - Auto-switch agent focus as workflow phase changes.
 
 ## Best Practices

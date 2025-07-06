@@ -1,35 +1,15 @@
----
-description: >
-  Manages environment setup, reset, and service initialization for the PDF Chat Appliance.
-  Automates virtualenv activation, dependency installation, and script execution. Prevents accidental data loss and maintains reproducibility.
-alwaysApply: true
-manual: false
-globs:
-  - 'scripts/*.ps1'
-  - 'scripts/*.sh'
-  - 'requirements*.txt'
-  - '.env*'
-  - 'docker-compose.*'
-  - 'Makefile'
-  - 'setup.*'
-  - 'config/*.py'
-  - 'logs/**'
-  - 'uploads/**'
----
-
 # Environment Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Automate and validate Python environment setup (`.venv`, requirements, config).
-- Ensure activation of the virtual environment before executing scripts or installing packages.
-- Manage environment management scripts (`.ps1`, `.sh`, Makefile, etc.).
-- Validate that all services (Ollama, Qdrant, API) are running and restarted cleanly as needed.
-- Prevent overwriting of `.env` or deletion of persistent data without explicit confirmation.
-- Log all major environment resets, script runs, and package updates in `session_notes.md`.
-- Collaborate with deployment-monitor and system-architect to ensure environment is production-ready.
-- Block agent action if required dependencies are missing, environment is not activated, or startup fails.
-- Suggest improvements or simplifications for environment management as project evolves.
+- **Environment setup** - automate and validate Python environment setup (`.venv`, requirements, config)
+- **Configuration management** - manage environment management scripts (`.ps1`, `.sh`, Makefile, etc.)
+- **Dependency validation** - ensure activation of the virtual environment before executing scripts or installing packages
+- **Environment documentation** - log all major environment resets, script runs, and package updates in `session_notes.md`
+- **Coordinate with deployment-monitor** for service status and deployment health
+- **Coordinate with python-engineer** for setup scripts and implementation
 
 ## Environment Rules
 
@@ -48,3 +28,33 @@ globs:
 ---
 
 If any environment rule is not satisfied, or if setup fails, block agent and human action and raise a descriptive error for user remediation.
+
+
+## No-Stall, Always-Log CLI/Script Execution
+
+- Every agent, script, or check must:
+    - Run all external commands (CLI/tool checks, scripts, system calls) with a timeout (default 5 seconds).
+    - Capture and log both stdout (normal output) and stderr (error output) for every command.
+    - Never pause, block, or wait for input on any error—always continue to the next check after logging.
+    - If a command fails, times out, or returns an error, log the error (with details) and continue the workflow.
+    - Never require manual input, Read-Host, or confirmation prompts for any check.
+    - Summarize all errors, warnings, and timeouts in `session_notes.md` for review and audit.
+- This policy is pre-approved and mandatory for all agent and automation workflows.
+
+- Document all environment changes and failures for traceability.
+
+---
+
+If any environment rule is not satisfied, or if setup fails, block agent and human action and raise a descriptive error for user remediation.
+
+
+## No-Stall, Always-Log CLI/Script Execution
+
+- Every agent, script, or check must:
+    - Run all external commands (CLI/tool checks, scripts, system calls) with a timeout (default 5 seconds).
+    - Capture and log both stdout (normal output) and stderr (error output) for every command.
+    - Never pause, block, or wait for input on any error—always continue to the next check after logging.
+    - If a command fails, times out, or returns an error, log the error (with details) and continue the workflow.
+    - Never require manual input, Read-Host, or confirmation prompts for any check.
+    - Summarize all errors, warnings, and timeouts in `session_notes.md` for review and audit.
+- This policy is pre-approved and mandatory for all agent and automation workflows.

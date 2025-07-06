@@ -1,0 +1,35 @@
+{
+  "timestamp": "2025-07-04T18:34:55.873749",
+  "analysis": {
+    "org-chart": {
+      "source": "D:\\repos\\pdf-chat-appliance\\agent-shared\\diagrams\\org-chart.drawio",
+      "has_mmd": true,
+      "has_svg": false,
+      "has_png": false,
+      "missing": [
+        "svg",
+        "png"
+      ],
+      "status": "incomplete"
+    },
+    "pdf-chat-architecture": {
+      "source": "D:\\repos\\pdf-chat-appliance\\agent-shared\\diagrams\\pdf-chat-architecture.drawio",
+      "has_mmd": true,
+      "has_svg": false,
+      "has_png": false,
+      "missing": [
+        "svg",
+        "png"
+      ],
+      "status": "incomplete"
+    },
+    "_orphaned": []
+  },
+  "summary": {
+    "total_drawio": 2,
+    "complete": 0,
+    "acceptable": 0,
+    "incomplete": 2,
+    "orphaned": 0
+  }
+}

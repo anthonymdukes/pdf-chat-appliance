@@ -9,6 +9,7 @@
 ## Build Instructions
 
 1. **Update ISO checksum:**
+
    ```bash
    cd packer
    # Download Ubuntu 24.04 ISO and get checksum
@@ -18,6 +19,7 @@
    ```
 
 2. **Build the OVA:**
+
    ```bash
    packer init ubuntu-template.pkr.hcl
    packer build ubuntu-template.pkr.hcl
@@ -33,6 +35,7 @@
 2. **Start VM** and wait for boot
 3. **Access WebUI** at `http://<VM_IP>`
 4. **Test CLI:**
+
    ```bash
    ssh ubuntu@<VM_IP>
    pdfchat version
@@ -49,4 +52,4 @@
 
 - Modify `vmx_data` for different network configurations
 - Update `preseed.cfg` for different installation options
-- Adjust VM specs in the template 
+- Adjust VM specs in the template

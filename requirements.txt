@@ -23,14 +23,19 @@ llama-index-vector-stores-qdrant>=0.1.0,<0.2.0
 sqlalchemy==2.0.23
 alembic==1.13.1
 
-# Document processing and retrieval
-pypdf>=4.0.1,<5.0.0
+# Document processing and retrieval (Enterprise-optimized)
+PyMuPDF>=1.23.0  # Much faster than PyPDF for large documents
+pypdf>=4.0.1,<5.0.0  # Keep as fallback
 langchain==0.1.0
 langchain-community==0.0.10
+asyncio-mqtt>=0.16.0  # For async processing
+aiofiles>=23.0.0  # Async file operations
 
 # Embedding models and transformers
-transformers==4.37.0
-sentence-transformers==2.2.2   # (optional: upgrade to 2.7.x for newer models)
+transformers==4.53.0
+sentence-transformers==2.2.2
+tokenizers==0.21.2
+einops==0.8.1
 # If using new transformer models, ensure version compatibility
 
 # Utilities

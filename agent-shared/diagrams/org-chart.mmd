@@ -1,0 +1,86 @@
+graph TB
+    %% Title
+    title["Enterprise Agent Reorganization Structure"]
+    
+    %% Enterprise Architect (Top Level)
+    EA[Enterprise Architect]
+    
+    %% Agent Core Division
+    subgraph AC["Agent Core Division"]
+        SA[System Architect]
+        TM[Task Manager]
+        AF[Agent Flow]
+        GG[Global Governance]
+        RG[Rule Governor]
+        PS[Project Structure]
+    end
+    
+    %% Development Division
+    subgraph DD["Development Division"]
+        AB[API Builder]
+        PE[Python Engineer]
+        DS[Database Specialist]
+        LS[LLM Specialist]
+        PS2[Prompt Strategy]
+        SD[Senior Developer]
+    end
+    
+    %% Quality Division
+    subgraph QD["Quality Division"]
+        CR[Code Review]
+        QT[QA Tester]
+        CS[Coding Style]
+        SC[Security Checks]
+        OB[Observability]
+        DM[Deployment Monitor]
+    end
+    
+    %% Operations Division
+    subgraph OD["Operations Division"]
+        EN[Environment]
+        RM[Repository Management]
+        DOC[Docs Maintainer]
+        TL[Training Lead]
+        LC[LLM Configuration]
+        WP[Workflow PDF Chat]
+    end
+    
+    %% Shared Services (Bottom)
+    subgraph SS["Shared Services"]
+        OS[Orchestration Services]
+        CG[Compliance & Governance]
+        CDC[Cross-Division Coordination]
+    end
+    
+    %% Communication Lines
+    %% Enterprise Architect to Divisions
+    EA --> AC
+    EA --> DD
+    EA --> QD
+    EA --> OD
+    
+    %% Divisions to Shared Services
+    AC -.-> SS
+    DD -.-> SS
+    QD -.-> SS
+    OD -.-> SS
+    
+    %% Cross-Division Communication
+    AC -.-> DD
+    DD -.-> QD
+    QD -.-> OD
+    
+    %% Styling
+    classDef enterprise fill:#d5e8d4,stroke:#82b366,stroke-width:2px
+    classDef core fill:#dae8fc,stroke:#6c8ebf,stroke-width:2px
+    classDef dev fill:#fff2cc,stroke:#d6b656,stroke-width:2px
+    classDef quality fill:#e1d5e7,stroke:#9673a6,stroke-width:2px
+    classDef ops fill:#f8cecc,stroke:#b85450,stroke-width:2px
+    classDef shared fill:#ffe6cc,stroke:#d79b00,stroke-width:2px
+    
+    class EA enterprise
+    class AC,SA,TM,AF,GG,RG,PS core
+    class DD,AB,PE,DS,LS,PS2,SD dev
+    class QD,CR,QT,CS,SC,OB,DM quality
+    class OD,EN,RM,DOC,TL,LC,WP ops
+    class SS,OS,CG,CDC shared 

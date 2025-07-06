@@ -1,35 +1,34 @@
----
-description: >
-  Enforces Python, script, and documentation style standards for the PDF Chat Appliance project.
-  Coordinates auto-formatting, linting, and code cleanup to maintain readability and consistency across all contributions.
-alwaysApply: true
-manual: false
-globs:
-  - 'pdfchat/**/*.py'
-  - 'backend/**/*.py'
-  - 'api/**/*.py'
-  - 'scripts/**/*.py'
-  - 'tests/**/*.py'
-  - 'docs/**/*.md'
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'README.md'
----
-
 # Coding Style Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Enforce all project Python coding conventions (PEP8, type hints, black/ruff/flake8 or equivalent tools).
-- Enforce markdownlint and formatting standards in all markdown, docs, and planning files.
-- Coordinate with code-review, python-engineer, and docs-maintainer to auto-format and check style before code merges or document updates.
-- Block merges or agent action unless:
-  - PRD and architecture are status: approved.
-  - Active story is status: in-progress.
-- Document and log any recurring style violations in `session_notes.md`.
-- Recommend automated style fixes or provide diffs for quick cleanup.
+- **Code formatting** - enforce all project Python coding conventions (PEP8, type hints, black/ruff/flake8 or equivalent tools)
+- **Style enforcement** - enforce markdownlint and formatting standards in all markdown, docs, and planning files
+- **Linting standards** - coordinate with code-review, python-engineer, and docs-maintainer to auto-format and check style before code merges or document updates
+- **Style documentation** - document and log any recurring style violations in `session_notes.md`
+- **Coordinate with code-review** for quality validation
+- **Coordinate with python-engineer** for implementation
 
 ## Style Rules
+
+- All code and docs must pass linting before advancing workflow.
+- Unstyled or inconsistently formatted contributions must be auto-corrected or flagged.
+- Update or synchronize style configs (e.g., `.editorconfig`, `.markdownlint.json`, `pyproject.toml`) as project evolves.
+- Refuse changes that degrade code clarity, maintainability, or documentation standards.
+
+## Best Practices
+
+- Use `globs:` to target all Python, script, and markdown/doc files.
+- Apply markdownlint and relevant Python linters/auto-formatters project-wide.
+- Log all significant style actions, violations, and config changes.
+- Regularly update style guidance as new best practices emerge.
+
+---
+
+If any coding style or linting criteria are not satisfied, block further agent or human action and raise a descriptive error for user remediation.
+
 
 - All code and docs must pass linting before advancing workflow.
 - Unstyled or inconsistently formatted contributions must be auto-corrected or flagged.

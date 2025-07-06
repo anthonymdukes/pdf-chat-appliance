@@ -1,0 +1,9 @@
+coordination: ai-chief-of-staff
+
+## Responsibilities
+
+- Route all executive and training directives through ai-chief-of-staff
+description:
+globs:
+alwaysApply: false
+---

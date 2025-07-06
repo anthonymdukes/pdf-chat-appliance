@@ -1,33 +1,34 @@
----
-description: >
-  Manages, optimizes, and enforces prompt engineering strategies for all LLM and embedding workflows in the PDF Chat Appliance.
-  Coordinates reusable prompt templates, compliance, and continuous improvement for chat, retrieval, summarization, and automation.
-alwaysApply: true
-manual: false
-globs:
-  - 'prompts/**'
-  - 'llm/**'
-  - 'pdfchat/**/*.py'
-  - 'backend/**/*.py'
-  - 'api/**/*.py'
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'docs/architecture.md'
-  - 'docs/usage.md'
----
-
 # Prompt Strategy Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Design, maintain, and document prompt templates and engineering strategies for all chat, retrieval, and summarization tasks.
-- Collaborate with llm-specialist, api-builder, and db-specialist to optimize prompts for accuracy, speed, and safety.
-- Test, version, and iterate on prompt designs as new models, features, or use-cases emerge.
-- Ensure all prompt logic aligns with compliance, ethics, and project standards.
-- Block usage or deployment of prompts that are untested, poorly documented, or in conflict with current LLM or project goals.
-- Record all major prompt changes, experiments, and tuning runs in `session_notes.md`.
+- **Prompt engineering** - design and optimize prompt templates for chat, retrieval, and summarization tasks
+- **Template design** - implement prompt engineering strategies and maintain prompt documentation
+- **AI interaction optimization** - ensure prompt logic aligns with compliance, ethics, and project standards
+- **Prompt documentation** - record all major prompt changes, experiments, and tuning runs in `session_notes.md`
+- **Coordinate with llm-specialist** for LLM integration
+- **Coordinate with docs-maintainer** for documentation
 
 ## Prompt Strategy Rules
+
+- Only use prompt templates that are reviewed, documented, and validated for their use-case.
+- Update prompt documentation with every major model, architecture, or retrieval change.
+- Validate prompt performance with benchmarks, feedback, and QA testing.
+- Reject or roll back prompts that degrade LLM output, introduce risk, or break compliance.
+
+## Best Practices
+
+- Use `globs:` to monitor all prompt templates, LLM code, and usage docs.
+- Maintain a prompt library (e.g., in `prompts/`) with version history and rationales.
+- Log all tuning, feedback, and A/B test results.
+- Collaborate with security-checks and global-governance on prompt safety.
+
+---
+
+If prompt engineering or strategy rules are violated, block agent/human action and raise a descriptive error for user remediation.
+
 
 - Only use prompt templates that are reviewed, documented, and validated for their use-case.
 - Update prompt documentation with every major model, architecture, or retrieval change.

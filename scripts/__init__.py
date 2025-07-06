@@ -6,4 +6,4 @@ superseded by the modular pdfchat package and CLI interface.
 """
 
 __version__ = "0.1.0"
-__deprecated__ = True 
+__deprecated__ = True

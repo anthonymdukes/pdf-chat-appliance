@@ -1,11 +1,11 @@
 # scripts/agent-run.ps1
 param (
-    [ValidateSet("Reset-Env", "Run-Tests", "Rebuild-Embeddings", "Full-Build")]
+    [ValidateSet("Reset-Environment", "Invoke-Test", "Update-Embedding", "Invoke-FullBuild")]
     [string]$Action
 )
 
 # Activate Python virtual environment
-function Activate-Venv {
+function Enable-VirtualEnvironment {
     $venvPath = ".\.venv\Scripts\Activate.ps1"
     if (Test-Path $venvPath) {
         Write-Host "Activating Python virtual environment..."
@@ -17,7 +17,7 @@ function Activate-Venv {
 }
 
 # Reset services, clean volumes, and re-install dependencies
-function Reset-Env {
+function Reset-Environment {
     Write-Host "Resetting environment..."
     docker-compose down -v
     Remove-Item -Recurse -Force .\chroma, .\qdrant, .\uploads, .\logs -ErrorAction SilentlyContinue
@@ -26,21 +26,21 @@ function Reset-Env {
 }
 
 # Run automated test suite
-function Run-Tests {
+function Invoke-Test {
     Write-Host "Running test suite..."
     pytest --maxfail=3 --disable-warnings
     Write-Host "Test execution complete."
 }
 
 # Rebuild all document embeddings
-function Rebuild-Embeddings {
+function Update-Embedding {
     Write-Host "Rebuilding vector embeddings from uploaded documents..."
     python .\scripts\embed_all.py
     Write-Host "Embedding process complete."
 }
 
 # Perform health check on all container services
-function Health-Check {
+function Test-Health {
     $healthScript = ".\scripts\health-check.ps1"
     if (Test-Path $healthScript) {
         Write-Host "Running Docker health check..."
@@ -52,23 +52,32 @@ function Health-Check {
 }
 
 # Execute full deployment cycle: Reset → Docker up → Health Check → Tests
-function Full-Build {
+function Invoke-FullBuild {
     Write-Host "Starting full build sequence (environment reset → Docker build → health check → tests)..."
-    Reset-Env
+    Reset-Environment
     docker-compose up --build -d
-    Health-Check
-    Run-Tests
+    Test-Health
+    Invoke-Test
     Write-Host "Full build complete."
 }
 
 # Initialize Python environment
-Activate-Venv
+Enable-VirtualEnvironment
 
 # Dispatch execution based on selected action
 switch ($Action) {
-    "Reset-Env"           { Reset-Env; Health-Check }
-    "Run-Tests"           { Run-Tests }
-    "Rebuild-Embeddings"  { Rebuild-Embeddings }
-    "Full-Build"          { Full-Build }
-    default               { Write-Host "Unknown action. Please use one of: Reset-Env, Run-Tests, Rebuild-Embeddings, Full-Build." }
+    "Reset-Environment"      { Reset-Environment; Test-Health }
+    "Invoke-Test"           { Invoke-Test }
+    "Update-Embedding"      { Update-Embedding }
+    "Invoke-FullBuild"      { Invoke-FullBuild }
+    default                  { Write-Host "Unknown action. Please use one of: Reset-Environment, Invoke-Test, Update-Embedding, Invoke-FullBuild." }
 }
+
+Write-Host ""
+
+# UNCONDITIONAL: Ensure prompt unsticking regardless of exit path
+Write-Host ""
+
+# COMPREHENSIVE CLEANUP: Remove any orphaned PowerShell jobs and Docker processes
+Get-Job -ErrorAction SilentlyContinue | Remove-Job -Force -ErrorAction SilentlyContinue
+docker system prune -f --volumes 2>$null | Out-Null

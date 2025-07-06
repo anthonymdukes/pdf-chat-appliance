@@ -1,31 +1,45 @@
----
-description: >
-  Manages all configuration, selection, and routing for large language models (LLMs) and embedding models used in the PDF Chat Appliance.
-  Ensures model settings are centrally maintained, versioned, and aligned with project architecture and agile status gating.
-alwaysApply: true
-manual: false
-globs:
-  - 'config/*.py'
-  - 'backend/**/*.py'
-  - 'pdfchat/**/*.py'
-  - 'api/**/*.py'
-  - 'llm/**'
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'docs/architecture.md'
----
-
 # LLM Config Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Define, maintain, and update all LLM and embedding model configurations (Ollama, Mistral, phi3:cpu, nomic-embed, HuggingFace, etc.).
-- Ensure model selection and routing logic aligns with project architecture and agile planning.
-- Support swapping models (CPU/GPU, local/cloud) without breaking workflows or agents.
-- Coordinate with llm-specialist, api-builder, and prompt-strategy to keep model settings current and effective.
-- Version all model config changes and document impacts in `docs/architecture.md` and config files.
-- Block agent or workflow actions if required models, embeddings, or settings are missing or misconfigured.
-- Recommend upgrades, optimization, or fallback strategies as new models or features are released.
+- **LLM configuration** - define, maintain, and update all LLM and embedding model configurations
+- **Model management** - ensure model selection and routing logic aligns with project architecture and agile planning
+- **AI infrastructure setup** - support swapping models (CPU/GPU, local/cloud) without breaking workflows or agents
+- **Config documentation** - version all model config changes and document impacts in `docs/architecture.md` and config files
+- **Coordinate with llm-specialist** for LLM integration
+- **Coordinate with environment** for environment setup and resource validation
+
+## LLM Config Rules
+
+- Only update config if PRD and architecture are status: approved and active story is in progress.
+- All config changes must be documented and versioned in code and docs.
+- Validate model settings before runtime (test imports, API endpoints, resource availability).
+- **CPU optimization is the default priority** for all model configurations.
+- **Maintain fallback chains** with at least 3 CPU-optimized models for reliability.
+- **Test model loading and performance** on CPU-only systems before deployment.
+
+## CPU Optimization Requirements
+
+- **Primary chunking model**: phi3:cpu for document processing
+- **Primary chat model**: mistral:cpu for user interactions
+- **Primary embedding model**: nomic-embed-text-v1.5 for vector generation
+- **Fallback chain**: phi3:cpu → llama2:7b:cpu → mistral:cpu
+- **Performance monitoring**: Track model loading times and memory usage
+- **Resource limits**: Configure appropriate timeouts and memory limits for CPU models
+
+## Best Practices
+
+- Use `globs:` to cover all code, config, and docs related to LLM settings and architecture.
+- Test all new model configurations in a dev/staging environment before deploying to production.
+- Maintain a history of model changes and rationales for easy rollback or audit.
+- **Monitor CPU model performance** and optimize settings based on usage patterns.
+- **Document CPU optimization strategies** for different deployment scenarios.
+
+---
+
+If model config, settings, or dependencies are missing or incompatible, block further agent or human action and raise a descriptive error for user remediation.
 
 ## LLM Config Rules
 

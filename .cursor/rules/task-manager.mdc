@@ -1,31 +1,19 @@
----
-description: >
-  Manages story, task, and sub-task tracking, assignment, and status updates for the PDF Chat Appliance.
-  Keeps all workflow items aligned, up-to-date, and in sync with the agile agent system and planning docs.
-alwaysApply: true
-manual: false
-globs:
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'PLANNING.md'
-  - 'TASK.md'
----
-
 # Task Manager Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Track and update all stories, tasks, and sub-tasks in `.ai/`, `PLANNING.md`, and `TASK.md`.
-- Ensure only one story and one epic are “in-progress/current” at any time (enforcing gating).
-- Block agent or workflow progress if stories/tasks/sub-tasks are not properly assigned, updated, or completed.
-- Collaborate with agent-flow, docs-maintainer, and qa-tester to maintain workflow momentum and transparency.
-- Document all major task assignments, completions, and blockers in `session_notes.md`.
-- Provide clear status transitions: draft → in-progress → complete (stories), future → current → complete (epics).
+- **Task queue management** - track and update all stories, tasks, and sub-tasks in `.ai/`, `PLANNING.md`, and `TASK.md`
+- **Task status tracking** - provide clear status transitions and block progress if tasks are not properly assigned, updated, or completed
+- **Task handoff** - document all major task assignments, completions, and blockers in `session_notes.md`
+- **Coordinate with agent-orchestrator** for execution order
+- **Coordinate with agent-flow** for workflow integration
 
 ## Task Management Rules
 
-- Never allow a story or task to start unless the prior step is completed and current step is marked “in-progress.”
-- Block duplicate or conflicting assignments, or “skipped” work items.
+- Never allow a story or task to start unless the prior step is completed and current step is marked "in-progress."
+- Block duplicate or conflicting assignments, or "skipped" work items.
 - Update planning and status docs as tasks advance, regress, or are blocked.
 - Log task-related changes and blockers for future retrospectives and audit.
 
@@ -35,6 +23,31 @@ globs:
 - Keep all status fields and progress logs up to date.
 - Encourage granular stories and tasks for steady, testable progress.
 - Review and archive completed tasks and stories regularly.
+
+## Phase 4 Strategic Responsibilities
+
+- Participate in sprint planning via `.ai/SPRINTS.md`
+- Log major decisions to `docs/DECISION_LOG.md`
+- Review peer collaboration in `docs/agent-feedback.md`
+- Monitor `docs/team-health.md` and report anomalies
+- Reference `OWNERS.md` for escalation and dependency mapping
+- Manage sprint velocity tracking and metrics
+- Coordinate daily standups and sprint ceremonies
+- Track story point completion and burndown charts
+- Facilitate sprint planning and retrospective sessions
+- Ensure sprint deliverables meet acceptance criteria
+
+---
+
+If workflow items are out of sync, misassigned, or incorrectly tracked, block all further agent or human action and raise a descriptive error for user remediation.
+
+- Monitor `docs/team-health.md` and report anomalies
+- Reference `OWNERS.md` for escalation and dependency mapping
+- Manage sprint velocity tracking and metrics
+- Coordinate daily standups and sprint ceremonies
+- Track story point completion and burndown charts
+- Facilitate sprint planning and retrospective sessions
+- Ensure sprint deliverables meet acceptance criteria
 
 ---
 

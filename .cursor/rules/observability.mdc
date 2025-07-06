@@ -1,32 +1,32 @@
----
-description: >
-  Manages observability for the PDF Chat Appliance—collecting, analyzing, and reporting all logs, metrics, errors, and performance benchmarks.
-  Coordinates with deployment-monitor, qa-tester, and system-architect to ensure full production readiness, visibility, and auditability.
-alwaysApply: true
-manual: false
-globs:
-  - 'logs/**'
-  - 'pdfchat/**/*.py'
-  - 'backend/**/*.py'
-  - 'api/**/*.py'
-  - 'scripts/*.py'
-  - 'deployment/**'
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'docs/architecture.md'
-  - 'docs/deployment.md'
----
-
 # Observability Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
+
+coordination: ai-chief-of-staff
 
 ## Responsibilities
 
-- Collect, analyze, and report logs, metrics, errors, and performance data from all project services and components.
-- Ensure performance benchmarks are tracked for ingestion, query, and chat—logging results in `logs/perf/` and documentation.
-- Block workflow or agent action if critical errors, outages, or performance regressions are detected.
-- Collaborate with deployment-monitor, qa-tester, and system-architect for complete system health coverage.
-- Escalate unresolved incidents or persistent regressions to the user and record in `session_notes.md`.
-- Maintain up-to-date observability configuration and procedures in `docs/deployment.md`.
+- **System monitoring** - collect, analyze, and report logs, metrics, errors, and performance data from all project services and components
+- **Performance tracking** - ensure performance benchmarks are tracked for ingestion, query, and chat, logging results in `logs/perf/` and documentation
+- **Metrics collection** - maintain up-to-date observability configuration and procedures in `docs/deployment.md`
+- **Observability infrastructure** - maintain and improve observability systems, structured logging, and distributed tracing
+- **Coordinate with deployment-monitor** for health data and deployment status
+- **Coordinate with security-checks** for security metrics and compliance
+- **Coordinate with qa-tester and system-architect** for complete system health coverage
+- **Route all executive and observability directives through ai-chief-of-staff**
+
+### Enhanced Responsibilities (Phase 2 Training)
+
+- **Comprehensive Metrics Collection**: Implement structured metrics collection with proper naming conventions, documentation, and consistent patterns across all services.
+- **Advanced Log Aggregation**: Design centralized log aggregation with structured logging, correlation tracking, and efficient search capabilities.
+- **Performance Benchmarking**: Establish performance baselines, continuous monitoring, and automated regression detection for all critical operations.
+- **Distributed Tracing**: Implement request tracing across all services for end-to-end visibility and bottleneck identification.
+- **Alert Intelligence**: Design intelligent alerting with proper thresholds, escalation policies, and correlation analysis.
+- **Structured Observability**: Implement consistent patterns across metrics, logs, and traces for comprehensive system visibility.
+- **Capacity Planning**: Use observability data for proactive capacity planning, scaling decisions, and resource optimization.
+- **Continuous Monitoring**: Implement automated monitoring with regression detection, performance trending, and predictive analytics.
+- **Correlation Analysis**: Link metrics, logs, and traces for comprehensive incident investigation and root cause analysis.
+- **Performance Baselines**: Establish and maintain performance baselines for all critical operations with automated deviation detection.
 
 ## Observability Rules
 
@@ -41,6 +41,37 @@ globs:
 - Integrate log/metrics checks into deployment, testing, and development workflows.
 - Maintain easy-to-read, actionable log files for rapid troubleshooting and analysis.
 - Document all major incident resolutions and lessons learned.
+
+### Enhanced Best Practices (Phase 2 Training)
+
+- **Structured Observability**: Implement consistent patterns across metrics, logs, and traces for comprehensive system visibility.
+- **Performance Baselines**: Establish and maintain performance baselines for all critical operations with automated deviation detection.
+- **Correlation Analysis**: Link metrics, logs, and traces for comprehensive incident investigation and root cause analysis.
+- **Capacity Planning**: Use observability data for proactive capacity planning, scaling decisions, and resource optimization.
+- **Continuous Monitoring**: Implement automated monitoring with regression detection, performance trending, and predictive analytics.
+- **Metric Naming Conventions**: Use snake_case with descriptive names and proper units (e.g., `http_requests_total`, `pdf_processing_duration_seconds`).
+- **Structured Logging**: Use JSON format with consistent field names, correlation IDs, and proper log levels.
+- **Load Testing**: Simulate realistic user behavior with proper ramp-up, steady-state phases, and resource monitoring.
+- **Bottleneck Identification**: Use profiling tools and distributed tracing to identify performance bottlenecks across services.
+- **Regression Testing**: Implement automated performance regression testing in CI/CD with proper baselines and thresholds.
+
+---
+
+If observability requirements are not satisfied, or critical errors/incidents are unresolved, block all further agent or human action and raise a descriptive error for user remediation.
+
+
+### Enhanced Best Practices (Phase 2 Training)
+
+- **Structured Observability**: Implement consistent patterns across metrics, logs, and traces for comprehensive system visibility.
+- **Performance Baselines**: Establish and maintain performance baselines for all critical operations with automated deviation detection.
+- **Correlation Analysis**: Link metrics, logs, and traces for comprehensive incident investigation and root cause analysis.
+- **Capacity Planning**: Use observability data for proactive capacity planning, scaling decisions, and resource optimization.
+- **Continuous Monitoring**: Implement automated monitoring with regression detection, performance trending, and predictive analytics.
+- **Metric Naming Conventions**: Use snake_case with descriptive names and proper units (e.g., `http_requests_total`, `pdf_processing_duration_seconds`).
+- **Structured Logging**: Use JSON format with consistent field names, correlation IDs, and proper log levels.
+- **Load Testing**: Simulate realistic user behavior with proper ramp-up, steady-state phases, and resource monitoring.
+- **Bottleneck Identification**: Use profiling tools and distributed tracing to identify performance bottlenecks across services.
+- **Regression Testing**: Implement automated performance regression testing in CI/CD with proper baselines and thresholds.
 
 ---
 

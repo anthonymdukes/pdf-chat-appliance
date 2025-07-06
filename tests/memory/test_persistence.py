@@ -1,8 +1,10 @@
 """
 Persistence tests for memory layer.
 """
-import os
+
+
 from memory.api import MemoryAPI
+
 
 def test_persistence_across_restarts(tmp_path):
     db_path = tmp_path / "persist.db"
@@ -16,4 +18,4 @@ def test_persistence_across_restarts(tmp_path):
     assert fetched_session is not None
     messages = api2.get_messages(session.id)
     assert len(messages) == 1
-    assert messages[0].content == "persisted message" 
+    assert messages[0].content == "persisted message"

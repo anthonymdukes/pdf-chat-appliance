@@ -1,0 +1,75 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # API Gateway
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # LLM Service
+  - job_name: 'llm-service'
+    static_configs:
+      - targets: ['llm-service:8003']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Vector Store Service
+  - job_name: 'vector-store'
+    static_configs:
+      - targets: ['vector-store:8005']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # PDF Preprocessor Service
+  - job_name: 'pdf-preprocessor'
+    static_configs:
+      - targets: ['pdf-preprocessor:8001']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Embedding Service
+  - job_name: 'embedding-service'
+    static_configs:
+      - targets: ['embedding-service:8002']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Chat Service
+  - job_name: 'chat-service'
+    static_configs:
+      - targets: ['chat-service:8004']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Redis
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    scrape_interval: 30s
+
+  # Qdrant
+  - job_name: 'qdrant'
+    static_configs:
+      - targets: ['qdrant:6333']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Ollama
+  - job_name: 'ollama'
+    static_configs:
+      - targets: ['ollama:11434']
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s 

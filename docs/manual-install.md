@@ -1,11 +1,13 @@
 # Manual Installation Guide
 
 ## Overview
+
 This guide provides step-by-step instructions for manually installing PDF Chat Appliance on a fresh Ubuntu system. This is useful for custom deployments, testing, or when OVA deployment is not preferred.
 
 ## Prerequisites
 
 ### System Requirements
+
 - **CPU**: 2+ cores (4+ recommended)
 - **RAM**: 4GB minimum (8GB recommended)
 - **Storage**: 25GB+ available space
@@ -13,6 +15,7 @@ This guide provides step-by-step instructions for manually installing PDF Chat A
 - **OS**: Ubuntu 22.04 LTS or 24.04 LTS
 
 ### Software Requirements
+
 - **Python**: 3.12.3+ (recommended) or 3.9+
 - **Git**: For cloning repository
 - **curl**: For Ollama installation
@@ -20,6 +23,7 @@ This guide provides step-by-step instructions for manually installing PDF Chat A
 ## Step 1: VM Creation
 
 ### VMware Workstation/Player
+
 1. **Create New VM:**
    - File → New Virtual Machine
    - Choose "Typical" configuration
@@ -41,6 +45,7 @@ This guide provides step-by-step instructions for manually installing PDF Chat A
      - Network adapter: Bridged (recommended) or NAT
 
 ### VirtualBox
+
 1. **Create New VM:**
    - Machine → New
    - Name: `pdf-chat-appliance`
@@ -61,6 +66,7 @@ This guide provides step-by-step instructions for manually installing PDF Chat A
      - Adapter 1: Bridged Adapter
 
 ### Proxmox
+
 1. **Create VM:**
    - Datacenter → Create VM
    - General:
@@ -80,6 +86,7 @@ This guide provides step-by-step instructions for manually installing PDF Chat A
 ## Step 2: Ubuntu Installation
 
 ### Installation Steps
+
 1. **Boot from ISO:**
    - Start VM and boot from Ubuntu ISO
    - Select "Install Ubuntu Server"
@@ -119,6 +126,7 @@ This guide provides step-by-step instructions for manually installing PDF Chat A
 ## Step 3: System Preparation
 
 ### Update System
+
 ```bash
 # Login as ubuntu user
 ssh ubuntu@<VM_IP>
@@ -133,6 +141,7 @@ sudo apt install -y python3 python3-pip python3-venv git curl wget nginx
 ```
 
 ### Create Application Directory
+
 ```bash
 # Create application directory
 sudo mkdir -p /opt/pdf-chat-appliance
@@ -150,6 +159,7 @@ sudo chown -R ubuntu:ubuntu /etc/pdfchat
 ## Step 4: Install Ollama
 
 ### Install Ollama
+
 ```bash
 # Install Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
@@ -167,6 +177,7 @@ ollama pull mistral
 ```
 
 ### Verify Ollama Installation
+
 ```bash
 # Check Ollama status
 ollama list
@@ -178,6 +189,7 @@ ollama run mistral "Hello, world!"
 ## Step 5: Install PDF Chat Appliance
 
 ### Clone Repository
+
 ```bash
 # Navigate to application directory
 cd /opt/pdf-chat-appliance
@@ -190,6 +202,7 @@ sudo chown -R ubuntu:ubuntu /opt/pdf-chat-appliance
 ```
 
 ### Setup Python Environment
+
 ```bash
 # Create virtual environment
 python3 -m venv venv
@@ -205,6 +218,7 @@ pip install -r requirements.txt
 ```
 
 ### Configure Application
+
 ```bash
 # Copy default configuration
 cp config/default.yaml /etc/pdfchat/config.yaml
@@ -219,6 +233,7 @@ python pdfchat.py config show
 ## Step 6: Setup Services
 
 ### Create Systemd Service
+
 ```bash
 # Create service file
 sudo tee /etc/systemd/system/pdfchat.service > /dev/null <<EOF
@@ -242,6 +257,7 @@ EOF
 ```
 
 ### Configure Nginx
+
 ```bash
 # Create nginx configuration
 sudo tee /etc/nginx/sites-available/pdfchat > /dev/null <<EOF
@@ -275,6 +291,7 @@ sudo systemctl start pdfchat
 ```
 
 ### Create CLI Symlink
+
 ```bash
 # Create CLI symlink
 sudo ln -sf /opt/pdf-chat-appliance/pdfchat.py /usr/local/bin/pdfchat
@@ -286,6 +303,7 @@ pdfchat version
 ## Step 7: Testing
 
 ### Test Services
+
 ```bash
 # Check service status
 sudo systemctl status pdfchat
@@ -297,6 +315,7 @@ sudo journalctl -u pdfchat -f
 ```
 
 ### Test Web Interface
+
 ```bash
 # Get VM IP address
 ip addr show
@@ -306,6 +325,7 @@ ip addr show
 ```
 
 ### Test CLI Commands
+
 ```bash
 # Test CLI functionality
 pdfchat version
@@ -316,6 +336,7 @@ pdfchat ingest /path/to/sample/pdfs
 ```
 
 ### Test API Endpoints
+
 ```bash
 # Test health endpoint
 curl http://localhost:5000/health
@@ -327,6 +348,7 @@ curl -X POST http://localhost:5000/query \
 ```
 
 ### Run Tests
+
 ```bash
 # Navigate to project directory
 cd /opt/pdf-chat-appliance
@@ -346,6 +368,7 @@ pytest tests/test_server.py -v
 ## Step 8: Security & Firewall
 
 ### Configure Firewall
+
 ```bash
 # Install ufw if not present
 sudo apt install -y ufw
@@ -361,6 +384,7 @@ sudo ufw status
 ```
 
 ### Security Hardening
+
 ```bash
 # Disable root login
 sudo passwd -l root
@@ -380,6 +404,7 @@ sudo systemctl restart ssh
 ### CLI Commands
 
 #### Ingest PDFs
+
 ```bash
 # Ingest PDFs from a directory
 pdfchat ingest /path/to/pdfs
@@ -389,6 +414,7 @@ pdfchat ingest /path/to/pdfs --config /etc/pdfchat/config.yaml
 ```
 
 #### Start Server
+
 ```bash
 # Start server with default settings
 pdfchat serve
@@ -401,6 +427,7 @@ pdfchat serve --debug
 ```
 
 #### Manage Configuration
+
 ```bash
 # Show current configuration
 pdfchat config show
@@ -413,6 +440,7 @@ pdfchat config reset
 ```
 
 #### Check Version
+
 ```bash
 pdfchat version
 ```
@@ -420,11 +448,13 @@ pdfchat version
 ### API Usage
 
 #### Health Check
+
 ```bash
 curl http://localhost:5000/health
 ```
 
 #### Query PDFs
+
 ```bash
 curl -X POST http://localhost:5000/query \
   -H "Content-Type: application/json" \
@@ -435,6 +465,7 @@ curl -X POST http://localhost:5000/query \
 ```
 
 #### Web Interface
+
 - Open browser to `http://<server-ip>:5000`
 - Simple HTML interface for testing
 
@@ -443,6 +474,7 @@ curl -X POST http://localhost:5000/query \
 ### Common Issues
 
 #### Service Won't Start
+
 ```bash
 # Check service status
 sudo systemctl status pdfchat
@@ -456,6 +488,7 @@ ls -la /var/lib/pdfchat/
 ```
 
 #### Port Already in Use
+
 ```bash
 # Check what's using port 5000
 sudo netstat -tlnp | grep :5000
@@ -465,6 +498,7 @@ sudo kill -9 <PID>
 ```
 
 #### Permission Issues
+
 ```bash
 # Fix ownership
 sudo chown -R ubuntu:ubuntu /opt/pdf-chat-appliance
@@ -473,6 +507,7 @@ sudo chown -R ubuntu:ubuntu /var/log/pdfchat
 ```
 
 #### Memory Issues
+
 ```bash
 # Check memory usage
 free -h
@@ -485,6 +520,7 @@ htop
 ```
 
 #### Test Failures
+
 ```bash
 # Check Python environment
 python --version
@@ -498,6 +534,7 @@ pytest -v -s
 ```
 
 ### Log Locations
+
 - Application logs: `/var/log/pdfchat/`
 - System logs: `sudo journalctl -u pdfchat`
 - Nginx logs: `/var/log/nginx/`
@@ -506,6 +543,7 @@ pytest -v -s
 ## Environment Variables
 
 ### Optional Environment Variables
+
 ```bash
 # Set in /etc/pdfchat/config.yaml or environment
 export PDFCHAT_CONFIG_FILE=/etc/pdfchat/config.yaml
@@ -516,12 +554,14 @@ export PDFCHAT_DEBUG=false
 ## Next Steps
 
 ### Production Considerations
+
 1. **SSL/HTTPS:** Configure SSL certificates
 2. **Backup:** Set up regular backups
 3. **Monitoring:** Implement system monitoring
 4. **Updates:** Schedule regular updates
 
 ### Customization
+
 1. **Models:** Configure different Ollama models
 2. **Embeddings:** Customize embedding models
 3. **Storage:** Configure external storage
@@ -530,6 +570,7 @@ export PDFCHAT_DEBUG=false
 ## Support
 
 For additional help:
+
 - Check the [main documentation](README.md)
 - Review [troubleshooting guide](docs/deployment.md)
-- Open an issue on GitHub 
+- Open an issue on GitHub

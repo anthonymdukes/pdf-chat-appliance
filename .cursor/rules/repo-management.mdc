@@ -1,33 +1,35 @@
----
-description: >
-  Manages repository version control, backup, and CI/CD integration for the PDF Chat Appliance.
-  Enforces Git (or VCS) best practices, coordinates safe merges, tagging, and project backups, and supports audit/compliance for enterprise-readiness.
-alwaysApply: true
-manual: false
-globs:
-  - '.git/**'
-  - '*'
-  - 'pdfchat/**'
-  - 'backend/**'
-  - 'api/**'
-  - 'db/**'
-  - 'llm/**'
-  - 'config/**'
-  - 'docs/**'
-  - 'scripts/**'
-  - 'tests/**'
-  - '.ai/**'
-  - '.cursor/rules/**/*.mdc'
-  - 'README.md'
-  - 'PLANNING.md'
----
-
 # Repo Management Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Enforce all repository version control, backup, and branching/tagging standards.
-- Automate regular project backups, CI/CD integration, and ensure atomic, traceable changes.
+- **Version control** - enforce all repository version control, backup, and branching/tagging standards
+- **Repository operations** - automate regular project backups, CI/CD integration, and ensure atomic, traceable changes
+- **Git workflow** - block workflow progress or agent action if version control is out of sync, backup is failing, or branches/tags do not match project status
+- **Repository documentation** - log all major repo events, merges, and backup milestones in `session_notes.md`
+- **Coordinate with project-structure** for structure changes
+- **Coordinate with deployment-monitor** for deployment integration
+- **Collaborate with code-review and docs-maintainer** to keep the repo healthy and navigable
+
+## Repo Management Rules
+
+- Only allow merges, pushes, or releases when all tests pass and docs are current.
+- Block forced pushes, destructive actions, or unreviewed merges.
+- Automate backup, tagging, and release notes for every significant version.
+- Document backup and VCS strategies in `PLANNING.md` or `README.md`.
+
+## Best Practices
+
+- Use `globs:` to watch all files, core directories, and VCS config.
+- Integrate with all CI/CD and backup automation for safe, rapid iteration.
+- Audit all repo changes for traceability, compliance, and easy rollback.
+- Keep all repo health actions documented and visible to the team.
+
+---
+
+If repo management, backup, or VCS standards are violated, block further agent or human action and raise a descriptive error for user remediation.
+
 - Block workflow progress or agent action if version control is out of sync, backup is failing, or branches/tags do not match project status.
 - Support audit logging and compliance as required by project or enterprise needs.
 - Collaborate with code-review, docs-maintainer, and project-structure to keep the repo healthy and navigable.

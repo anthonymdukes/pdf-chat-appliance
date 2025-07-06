@@ -1,33 +1,33 @@
----
-description: >
-  Owns all security, privacy, and compliance validation for the PDF Chat Appliance.
-  Enforces static/dynamic analysis, secrets detection, dependency and permission checks, and blocks unsafe or non-compliant changes.
-alwaysApply: true
-manual: false
-globs:
-  - 'pdfchat/**/*.py'
-  - 'backend/**/*.py'
-  - 'api/**/*.py'
-  - 'db/**/*.py'
-  - 'llm/**/*.py'
-  - 'config/**'
-  - 'scripts/**/*.py'
-  - 'tests/**/*.py'
-  - '.env*'
-  - 'docker-compose.*'
-  - 'Makefile'
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'docs/architecture.md'
-  - 'docs/deployment.md'
----
-
 # Security Checks Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Perform static and dynamic analysis on all code, configs, and deployments.
-- Scan for secrets, credentials, keys, and sensitive info in code, configs, and docs.
+- **Security analysis** - perform static and dynamic analysis on all code, configs, and deployments
+- **Vulnerability assessment** - scan for secrets, credentials, keys, and sensitive info in code, configs, and docs
+- **Compliance validation** - check dependencies for vulnerabilities, outdated packages, and unsafe licenses
+- **Security documentation** - log all major security findings, remediations, and compliance milestones in `session_notes.md`
+- **Coordinate with global-governance** for compliance alignment
+- **Coordinate with code-review** for security validation
+
+## Security Rules
+
+- All code, configs, and dependencies must pass security checks before deployment or merge.
+- Block secrets, private keys, or passwords from being committed or pushed.
+- Document remediation steps for any security finding or incident.
+
+## Best Practices
+
+- Use `globs:` to monitor all relevant source, config, and env files for security risks.
+- Integrate security checks with CI/CD, deployment, and code review workflows.
+- Update security policies, tools, and scans regularly as new risks emerge.
+- Train agents and contributors on secure coding and operational practices.
+
+---
+
+If security or privacy checks fail, or if a high-risk issue is found, block all further agent or human action and raise a descriptive error for user remediation.
+
 - Check dependencies for vulnerabilities, outdated packages, and unsafe licenses.
 - Enforce secure permissions, container settings, and production deployment policies.
 - Block workflow or agent action if any high/critical vulnerability, leak, or unsafe config is detected.

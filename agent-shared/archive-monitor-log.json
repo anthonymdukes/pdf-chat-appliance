@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "2025-07-05T13:18:45.716615",
+    "event_type": "threshold_check",
+    "details": {
+      "threshold": 500,
+      "critical_count": 3,
+      "warning_count": 22,
+      "normal_count": 219
+    }
+  },
+  {
+    "timestamp": "2025-07-05T13:19:53.247476",
+    "event_type": "threshold_check",
+    "details": {
+      "threshold": 500,
+      "critical_count": 2,
+      "warning_count": 22,
+      "normal_count": 220
+    }
+  },
+  {
+    "timestamp": "2025-07-05T13:26:31.608083",
+    "event_type": "threshold_check",
+    "details": {
+      "threshold": 500,
+      "critical_count": 2,
+      "warning_count": 22,
+      "normal_count": 220
+    }
+  },
+  {
+    "timestamp": "2025-07-05T13:41:44.704394",
+    "event_type": "threshold_check",
+    "details": {
+      "threshold": 500,
+      "critical_count": 2,
+      "warning_count": 8,
+      "normal_count": 234
+    }
+  }
+]

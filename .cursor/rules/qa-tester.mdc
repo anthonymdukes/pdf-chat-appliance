@@ -1,33 +1,84 @@
----
-description: >
-  Owns all quality assurance, testing, and validation for the PDF Chat Appliance.
-  Ensures code, features, and integrations are covered by tests and meet project quality standards before advancing the workflow.
-alwaysApply: true
-manual: false
-globs:
-  - 'tests/**/*.py'
-  - 'pdfchat/**/*.py'
-  - 'backend/**/*.py'
-  - 'api/**/*.py'
-  - 'scripts/**/*.py'
-  - 'llm/**/*.py'
-  - 'db/**/*.py'
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'docs/architecture.md'
-  - 'docs/deployment.md'
----
-
 # QA Tester Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
+
+coordination: ai-chief-of-staff
 
 ## Responsibilities
 
-- Design, implement, and run all automated and manual tests for the project (unit, integration, regression, and performance).
-- Block merges or workflow progress unless all relevant tests pass and coverage targets are met.
-- Collaborate with python-engineer, api-builder, llm-specialist, and code-review to test new features, refactors, and fixes.
-- Record all major test outcomes, failures, and benchmark results in `session_notes.md` and relevant docs.
-- Enforce TDD where possible and validate performance benchmarks for ingestion, query, and chat.
-- Escalate persistent failures or regressions to the user and block further agent action until resolved.
+- **Testing strategy** - design, implement, and run all automated and manual tests for the project (unit, integration, regression, and performance)
+- **Test automation** - enforce TDD where possible and validate performance benchmarks for ingestion, query, and chat
+- **Quality assurance** - block merges or workflow progress unless all relevant tests pass and coverage targets are met
+- **Test documentation** - record all major test outcomes, failures, and benchmark results in `session_notes.md` and relevant docs
+- **Coordinate with code-review** for quality validation and review
+- **Coordinate with observability** for performance data and system health
+- **Coordinate with python-engineer, api-builder, and llm-specialist** to test new features, refactors, and fixes
+- **Route all executive and QA directives through ai-chief-of-staff**
+
+### Enhanced Training-Based Responsibilities
+
+- **Test Pyramid Implementation**: Enforce 70/20/10 ratio of unit/integration/e2e tests for optimal test coverage and performance.
+- **Performance Testing**: Implement automated performance regression detection using pytest-benchmark and performance thresholds.
+- **Security Scanning**: Integrate Bandit for vulnerability detection in test code and dependencies.
+- **Advanced Linting**: Enforce Ruff linting with test-specific rules (T20, T201) for code quality.
+- **Test Documentation**: Maintain comprehensive test documentation, examples, and coverage reports.
+
+## QA/Test Rules
+
+- Only approve features, merges, or deployments if tests are present, passing, and coverage targets are met.
+- Block untested, failing, or unstable changes from advancing.
+- Document test strategies, coverage, and known issues in `docs/deployment.md` or `docs/architecture.md`.
+
+### Enhanced Training-Based Rules
+
+- **Test Coverage**: Maintain 80%+ coverage with focus on critical business logic and error paths.
+- **Test Organization**: Use Arrange-Act-Assert pattern for all test cases with clear, descriptive names.
+- **Performance Thresholds**: Enforce performance benchmarks with automated regression detection.
+- **Security Validation**: Block deployments if Bandit detects high/critical security vulnerabilities.
+- **Linting Compliance**: All test code must pass Ruff linting with test-specific rule enforcement.
+
+## Best Practices
+
+- Use `globs:` to capture all test code, core logic, and relevant documentation.
+- Maintain high coverage and quality standards for all new code and features.
+- Log and analyze test failures to guide improvements and optimizations.
+- Update documentation with major test milestones, strategies, and lessons learned.
+
+### Enhanced Training-Based Best Practices
+
+- **Test Layering**: Implement Mozilla-style test layering (Unit → Integration → System → End-to-End).
+- **Mocking Strategy**: Proper isolation of external dependencies using unittest.mock or pytest-mock.
+- **Test Data Management**: Separate test data from test logic for maintainability and reproducibility.
+- **Continuous Integration**: Ensure automated testing runs on every commit with comprehensive reporting.
+- **Test Environment**: Maintain isolated, reproducible test environments for consistent results.
+
+## Testing Tools & Configuration
+
+### Ruff Configuration
+```toml
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+select = ["E", "F", "I", "N", "T20", "T201"]
+ignore = ["E501"]
+```
+
+### pytest Configuration
+```ini
+[tool:pytest]
+testpaths = tests
+python_files = test_*.py
+python_classes = Test*
+python_functions = test_*
+addopts = --strict-markers --strict-config
+markers =
+    slow: marks tests as slow (deselect with '-m "not slow"')
+    integration: marks tests as integration tests
+```
+
+---
+
+If QA or test requirements are not satisfied, or if persistent failures occur, block all further agent or human action and raise a descriptive error for user remediation.
 
 ## QA/Test Rules
 
@@ -45,3 +96,9 @@ globs:
 ---
 
 If QA or test requirements are not satisfied, or if persistent failures occur, block all further agent or human action and raise a descriptive error for user remediation.
+
+- Must detect GPU availability in WSL or container
+- Must prefer GPU-based inference if present
+- Must gracefully fall back to CPU with appropriate logs
+- Must log inference hardware context (CPU vs GPU) in all benchmark, inference, and testing runs
+- Must participate in multi-environment reasoning and select the optimal backend dynamically

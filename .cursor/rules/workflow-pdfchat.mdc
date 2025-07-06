@@ -1,22 +1,14 @@
----
-description: >
-  Enforces the Agile project workflow for PDF Chat Appliance.
-  Manages planning, architecture, epic, and story progression and blocks implementation work
-  unless planning documents are approved and current story is in progress.
-alwaysApply: false
-manual: true
-globs:
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'scripts/*.ps1'
-  - 'docs/**'
-  - 'README.md'
----
-
 # Workflow: PDF Chat Appliance Agile Agent
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
+- **PDF chat specific workflows** - enforce sequential project workflow for PDF chat domain
+- **Domain expertise** - maintain clear implementation notes and domain-specific documentation
+- **PDF processing optimization** - require tests and documentation for all PDF-related tasks and subtasks
+- **Coordinate with agent-flow** for workflow patterns
+- **Coordinate with task-manager** for task integration
 - Enforce sequential project workflow:
   - Product Requirements (PRD) → Architecture → Epic → Story → Task
   - Block agent and developer work unless PRD and architecture are both status: approved
@@ -55,6 +47,20 @@ globs:
 - Use external LLMs for PRD/Arch drafting if needed, then sync into Cursor
 - Prefer manual rule activation for large projects, always-on for small/new ones
 - Regularly reset context (open a new Cursor window) after each Story or significant progress
+
+## Status Progression Example
+
+```
+PRD:      draft  → approved
+Arch:     draft  → approved
+Epic:     future → current   → complete
+Story:    draft  → in-progress → complete
+```
+
+---
+
+If any of the above criteria are not met, agent action is blocked and a descriptive error should be raised for user remediation.
+
 
 ## Status Progression Example
 

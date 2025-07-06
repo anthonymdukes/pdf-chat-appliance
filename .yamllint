@@ -1,0 +1,61 @@
+extends: default
+
+rules:
+  # 80 chars should be enough, but don't fail if a line is longer
+  line-length: disable
+  
+  # Accept both `true` and `True` as valid booleans
+  truthy:
+    check-keys: false
+  
+  # Allow comments
+  comments-indentation: disable
+  
+  # Allow trailing spaces
+  trailing-spaces: disable
+  
+  # Allow empty lines at the end of files
+  document-end: disable
+  
+  # Allow empty documents
+  empty-lines:
+    max: 2
+    max-end: 1
+  
+  # Allow flow style
+  flow-style: disable
+  
+  # Allow unquoted strings
+  quoted-strings: disable
+  
+  # Allow anchors and aliases
+  document-start: disable
+  
+  # Allow multiple documents in one file
+  document-start: disable
+  
+  # Allow unquoted strings
+  quoted-strings: disable
+  
+  # Allow flow style
+  flow-style: disable
+  
+  # Allow trailing spaces
+  trailing-spaces: disable
+  
+  # Allow empty lines at the end of files
+  document-end: disable
+  
+  # Allow empty documents
+  empty-lines:
+    max: 2
+    max-end: 1
+  
+  # Allow comments
+  comments-indentation: disable
+  
+  # Allow anchors and aliases
+  anchors: disable
+  
+  # Allow multiple documents in one file
+  document-start: disable 

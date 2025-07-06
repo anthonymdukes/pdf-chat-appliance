@@ -1,35 +1,33 @@
----
-description: >
-  Designs, implements, and maintains Python code for the PDF Chat Appliance—including backend, CLI, integration, and supporting modules.
-  Ensures code quality, test coverage, and adherence to architecture, coding standards, and agile gating.
-alwaysApply: true
-manual: false
-globs:
-  - 'pdfchat/**/*.py'
-  - 'backend/**/*.py'
-  - 'api/**/*.py'
-  - 'db/**/*.py'
-  - 'llm/**/*.py'
-  - 'scripts/**/*.py'
-  - 'tests/**/*.py'
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'docs/architecture.md'
----
-
 # Python Engineer Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
 
 ## Responsibilities
 
-- Design, implement, and refactor all core Python modules, backend logic, CLI, and supporting tools.
-- Ensure all code aligns with architecture, agile gating, and project requirements.
-- Collaborate with api-builder, db-specialist, llm-specialist, and code-review for robust, scalable code.
-- Block code implementation/refactor unless:
-  - PRD and architecture are status: approved.
-  - Active story is status: in-progress.
-- Write and update unit/integration tests for all features (coordinate with qa-tester).
-- Log all major code changes, refactors, and implementation notes in `session_notes.md`.
-- Suggest Pythonic optimizations and new patterns as the project evolves.
+- **Core Python development** - design, implement, and refactor all core Python modules, backend logic, CLI, and supporting tools
+- **Code refactoring** - ensure all code aligns with architecture, agile gating, and project requirements
+- **Utility functions** - write and update unit/integration tests for all features (coordinate with qa-tester)
+- **Implementation optimization** - suggest Pythonic optimizations and new patterns as the project evolves
+- **Coordinate with api-builder** for API implementation
+- **Coordinate with senior-dev** for architectural guidance and migrations
+
+## Python Engineering Rules
+
+- Only implement or refactor code if approved in current epic/story.
+- All code changes must be tested, reviewed, and documented.
+- Maintain compatibility with Docker, CI/CD, and deployment tooling.
+- Enforce coding-style and maintain code readability at all times.
+
+## Best Practices
+
+- Use `globs:` to target all Python source, scripts, tests, and related docs.
+- Log all important code design decisions and refactors.
+- Collaborate closely with qa-tester and code-review on coverage and standards.
+- Document new modules or major changes in `docs/architecture.md`.
+
+---
+
+If Python code changes break architecture, gating, or quality rules, block agent/human action and raise a descriptive error for user remediation.
 
 ## Python Engineering Rules
 

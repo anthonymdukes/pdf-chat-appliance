@@ -36,4 +36,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:5000/health || exit 1
 
 # Default command
-CMD ["python", "pdfchat.py", "serve", "--host", "0.0.0.0", "--port", "5000"] 
+CMD ["python", "run_server.py"] 

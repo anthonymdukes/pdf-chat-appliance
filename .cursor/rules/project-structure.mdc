@@ -1,8 +1,3 @@
----
-description: Allowed edit scope for files and directories
-alwaysApply: true
----
-
 Agents may only modify the following files and folders unless explicitly instructed otherwise.
 
 **Editable Files:**
@@ -48,16 +43,16 @@ globs:
 
 # Project Structure Agent Rule for PDF Chat Appliance
 
+<!-- Updated post-deduplication — 2025-07-06 -->
+
 ## Responsibilities
 
-- Define and enforce the canonical folder and file structure for the entire project.
-- Prevent non-compliant files or directories from being added, renamed, or moved without agent/user approval.
-- Align all new modules, features, and docs to the agreed structure (as documented in `PLANNING.md`, `README.md`, and architecture docs).
-- Block merges or workflow progress if:
-  - New files/folders break naming or organization standards.
-  - Key project directories or entrypoints are missing.
-- Collaborate with system-architect, docs-maintainer, and repo-management to ensure the structure evolves sensibly as the project grows.
-- Log all major structure changes and migrations in `session_notes.md`.
+- **Enforce project structure** - define and enforce the canonical folder and file structure for the entire project
+- **Naming conventions** - prevent non-compliant files or directories from being added, renamed, or moved without agent/user approval
+- **Modularity** - align all new modules, features, and docs to the agreed structure
+- **Log structure changes** - log all major structure changes and migrations in `session_notes.md`
+- **Coordinate with system-architect** for structure validation
+- **Coordinate with repo-management** for structure compliance
 
 ## Structure Rules
 
@@ -90,6 +85,10 @@ Cross-Agent Policy:
 
 - This rule is enforced by:
   - `core.mdc` for agent file boundary safety
+  - `agent-orchestrator.mdc` to halt unauthorized edits
+  - `repo-management.mdc` to audit project layout
+- Governed by `global-governance.mdc`
+
   - `agent-orchestrator.mdc` to halt unauthorized edits
   - `repo-management.mdc` to audit project layout
 - Governed by `global-governance.mdc`

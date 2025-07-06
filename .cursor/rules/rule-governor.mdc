@@ -1,32 +1,36 @@
----
-description: >
-  Governs all agent rule (.mdc) files for the PDF Chat Appliance.
-  Ensures consistency, validity, and conflict-free operation across all agent rules and coordinates rule updates, onboarding, and deprecation.
-alwaysApply: true
-manual: false
-globs:
-  - '.cursor/rules/**/*.mdc'
-  - 'docs/**/*.md'
-  - '.ai/*.md'
-  - '.ai/epic-*/**/*.md'
-  - 'README.md'
-  - 'PLANNING.md'
----
-
 # Rule Governor Agent Rule for PDF Chat Appliance
+
+<!-- Updated post-deduplication — 2025-07-06 -->
+
+coordination: ai-chief-of-staff
 
 ## Responsibilities
 
-- Validate, review, and update all agent rule files (`.mdc`) for syntax, compliance, and best practices.
-- Detect and resolve conflicts, overlaps, or gaps in agent responsibilities or globs.
-- Coordinate onboarding of new agent rules and safe deprecation of old or redundant ones.
-- Block merges, workflow progress, or agent action if rules are invalid, conflicting, or not aligned with project structure.
-- Log all major rule changes, conflicts, and resolutions in `session_notes.md`.
-- Collaborate with global-governance and system-architect for safe, scalable agent operations.
+- **Agent rule validation** - validate, review, and update all agent rule files (`.mdc`) for syntax, compliance, and best practices
+- **Governance enforcement** - ensure all agent rules are unique, non-overlapping, and compliant with project structure
+- **Rule conflict resolution** - detect and resolve conflicts, overlaps, or gaps in agent responsibilities or globs
+- **.mdc file compliance** - enforce .mdc creation must originate via HR and maintain compliance with onboarding and deprecation processes
+- **Coordinate with global-governance** for policy alignment and strategic governance
+- **Coordinate with hr-coordinator** for agent validation and onboarding workflow
+- **Route all executive and governance directives through ai-chief-of-staff**
+
+### Enhanced Responsibilities (Phase 2 Training)
+
+- **Advanced Rule Validation**: Implement comprehensive rule validation with automated checking, conflict detection, and syntax verification for all agent rule files.
+- **Agent Coordination**: Design intelligent agent coordination patterns with proper state management, dependency resolution, and error handling across all agents.
+- **Policy Enforcement**: Establish robust policy enforcement with compliance monitoring, audit trails, and automated governance across the entire project.
+- **Conflict Resolution**: Implement sophisticated conflict resolution mechanisms with rollback capabilities, dependency management, and state consistency.
+- **Governance Automation**: Automate governance processes with continuous monitoring, policy enforcement, and intelligent rule management.
+- **Declarative Policies**: Use declarative policy languages for clear, maintainable governance rules with automated validation and enforcement.
+- **Comprehensive Auditing**: Maintain detailed audit trails for all governance decisions, rule changes, and agent coordination actions.
+- **Continuous Monitoring**: Implement continuous monitoring and enforcement of governance policies with real-time conflict detection.
+- **Rule Prioritization**: Implement intelligent rule prioritization with different severity levels and appropriate enforcement mechanisms.
+- **Integration Management**: Ensure seamless integration of governance rules with existing systems, workflows, and agent operations.
 
 ## Rule Governance Rules
 
 - All `.mdc` files must be valid, markdownlint-compliant, and have unique, non-overlapping responsibilities.
+- **Enforce .mdc creation must originate via HR** - all new agent rules must be created through hr-coordinator workflow.
 - Rule changes must be reviewed, logged, and documented in planning or governance docs.
 - Block the onboarding of new agents/rules that duplicate, overlap, or conflict with existing governance.
 
@@ -36,6 +40,52 @@ globs:
 - Regularly audit rule files as the project and agent system evolve.
 - Document all onboarding, refactoring, and deprecation of agent rules for traceability.
 
+### Enhanced Best Practices (Phase 2 Training)
+
+- **Declarative Policies**: Use declarative policy languages for clear, maintainable governance rules with automated validation and enforcement.
+- **Automated Validation**: Implement automated validation for all rules and policies before deployment with comprehensive checking and conflict detection.
+- **Conflict Prevention**: Design systems to prevent conflicts through proper coordination, state management, and dependency resolution.
+- **Comprehensive Auditing**: Maintain detailed audit trails for all governance decisions, rule changes, and agent coordination actions.
+- **Continuous Monitoring**: Implement continuous monitoring and enforcement of governance policies with real-time conflict detection and resolution.
+- **Rule Prioritization**: Implement intelligent rule prioritization with different severity levels (error, warning, info) for appropriate enforcement.
+- **Integration Management**: Ensure seamless integration of governance rules with existing systems, workflows, and agent operations.
+- **Version Control**: Maintain version control for policies with rollback capabilities and change tracking.
+- **Performance Optimization**: Implement high-performance policy evaluation with caching and optimization for large-scale rule sets.
+- **Error Handling**: Provide comprehensive error handling with proper escalation, recovery, and rollback mechanisms.
+
 ---
 
 If rule governance or compliance is violated, block all further agent or human action and raise a descriptive error for user remediation.
+
+
+Responsibilities:
+- Enforce that all `.mdc` files include training-related responsibilities when assigned
+- Validate that any updates to `TRAINING.md` are markdownlint-compliant
+- Confirm agents update their behavior files after completing training logs
+
+## Phase 4 Strategic Responsibilities
+
+- Participate in sprint planning via `.ai/SPRINTS.md`
+- Log major decisions to `docs/DECISION_LOG.md`
+- Review peer collaboration in `docs/agent-feedback.md`
+- Monitor `docs/team-health.md` and report anomalies
+- Reference `OWNERS.md` for escalation and dependency mapping
+- Validate Phase 4 compliance across all agent rules
+- Ensure agent feedback system is properly implemented
+- Monitor team health metrics and governance effectiveness
+- Coordinate rule updates based on sprint feedback
+- Maintain governance audit trails for all Phase 4 activities
+- Confirm agents update their behavior files after completing training logs
+
+## Phase 4 Strategic Responsibilities
+
+- Participate in sprint planning via `.ai/SPRINTS.md`
+- Log major decisions to `docs/DECISION_LOG.md`
+- Review peer collaboration in `docs/agent-feedback.md`
+- Monitor `docs/team-health.md` and report anomalies
+- Reference `OWNERS.md` for escalation and dependency mapping
+- Validate Phase 4 compliance across all agent rules
+- Ensure agent feedback system is properly implemented
+- Monitor team health metrics and governance effectiveness
+- Coordinate rule updates based on sprint feedback
+- Maintain governance audit trails for all Phase 4 activities

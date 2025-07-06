@@ -32,7 +32,7 @@ function Test-ContainerHealth {
     }
 }
 
-function Test-ServiceEndpoints {
+function Test-ServiceEndpoint {
     Write-Log "=== Service Endpoint Validation ==="
     
     $endpoints = @(
@@ -106,11 +106,11 @@ function Test-ApplicationFunctionality {
     }
 }
 
-function Test-SystemResources {
+function Test-SystemResource {
     Write-Log "=== System Resource Check ==="
     
     # Check disk space
-    $disk = Get-WmiObject -Class Win32_LogicalDisk -Filter "DeviceID='C:'"
+    $disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='C:'"
     $freeSpaceGB = [math]::Round($disk.FreeSpace / 1GB, 2)
     $totalSpaceGB = [math]::Round($disk.Size / 1GB, 2)
     $usagePercent = [math]::Round((($disk.Size - $disk.FreeSpace) / $disk.Size) * 100, 1)
@@ -124,7 +124,7 @@ function Test-SystemResources {
     }
     
     # Check memory usage
-    $memory = Get-WmiObject -Class Win32_OperatingSystem
+    $memory = Get-CimInstance -ClassName Win32_OperatingSystem
     $freeMemoryGB = [math]::Round($memory.FreePhysicalMemory / 1MB, 2)
     $totalMemoryGB = [math]::Round($memory.TotalVisibleMemorySize / 1MB, 2)
     $memoryUsagePercent = [math]::Round((($memory.TotalVisibleMemorySize - $memory.FreePhysicalMemory) / $memory.TotalVisibleMemorySize) * 100, 1)
@@ -157,7 +157,7 @@ function Test-NetworkConnectivity {
     }
 }
 
-function Run-ValidationCycle {
+function Invoke-ValidationCycle {
     param([int]$CycleNumber)
     
     Write-Log "=========================================="
@@ -165,10 +165,10 @@ function Run-ValidationCycle {
     Write-Log "=========================================="
     
     Test-ContainerHealth
-    Test-ServiceEndpoints
+    Test-ServiceEndpoint
     Test-ModelAvailability
     Test-ApplicationFunctionality
-    Test-SystemResources
+    Test-SystemResource
     Test-NetworkConnectivity
     
     Write-Log "=========================================="
@@ -182,7 +182,7 @@ Write-Log "Configuration: $Cycles cycles, $CycleInterval second intervals"
 Write-Log "Log file: $LogFile"
 
 for ($i = 1; $i -le $Cycles; $i++) {
-    Run-ValidationCycle -CycleNumber $i
+    Invoke-ValidationCycle -CycleNumber $i
     
     if ($i -lt $Cycles) {
         Write-Log "Waiting $CycleInterval seconds before next cycle..."
@@ -206,8 +206,16 @@ Write-Log "  Errors: $errors"
 
 if ($errors -eq 0) {
     Write-Log "DEPLOYMENT VALIDATION: PASSED"
+    Write-Host ""
     exit 0
 } else {
     Write-Log "DEPLOYMENT VALIDATION: PASSED WITH ISSUES"
+    Write-Host ""
     exit 1
-} 
+}
+
+# UNCONDITIONAL: Ensure prompt unsticking regardless of exit path
+Write-Host ""
+
+# COMPREHENSIVE CLEANUP: Remove any orphaned PowerShell jobs
+Get-Job -ErrorAction SilentlyContinue | Remove-Job -Force -ErrorAction SilentlyContinue 
